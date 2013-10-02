@@ -18,7 +18,7 @@ class World(DirectObject):
 
         
         self.setupLights()
-        self.keyMap = {"left":0, "right":0}
+        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
         self.prevtime = 0
         self.accept("escape", sys.exit)
         
@@ -26,44 +26,76 @@ class World(DirectObject):
         self.accept("arrow_left", self.setKey, ["left", 1])
         self.accept("arrow_right-up", self.setKey, ["right", 0])
         self.accept("arrow_left-up", self.setKey, ["left", 0])
+        self.accept("w", self.setKey, ["w", 1])
+        self.accept("w-up", self.setKey, ["w", 0])
+        self.accept("s", self.setKey, ["s", 1])
+        self.accept("s-up", self.setKey, ["s", 0])
+        self.accept("a", self.setKey, ["a", 1])
+        self.accept("a-up", self.setKey, ["a", 0])
+        self.accept("d", self.setKey, ["d", 1])
+        self.accept("d-up", self.setKey, ["d", 0])
+        
+        
+        self.setupWASD()
         
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
         self.xspeed = 0
         self.yspeed = 0
         camera.lookAt(self.saucer.ship)
 
+    def setupWASD(self):
+        self.accept("w", self.setKey, ["w", 1])
+        self.accept("w-up", self.setKey, ["w", 0])
+        self.accept("s", self.setKey, ["s", 1])
+        self.accept("s-up", self.setKey, ["s", 0])
+        self.accept("a", self.setKey, ["a", 1])
+        self.accept("a-up", self.setKey, ["a", 0])
+        self.accept("d", self.setKey, ["d", 1])
+        self.accept("d-up", self.setKey, ["d", 0])
+            
         
     def setKey(self, key, value):
         self.keyMap[key] = value
         
     def rotateWorld(self,task):
-            elapsed = task.time - self.prevtime
-            self.prevtime = task.time
+        elapsed = task.time - self.prevtime
+        self.prevtime = task.time
+        
+        # Create a handle for pointer device #0
+        m = base.win.getPointer( 0 )
+        # Get the absolute [x,y] screen coordinates of the cursor
+        x = m.getX( )
+        y = m.getY( )
+
+        centerx = 400
+        centery = 300
+
+        xmov = 0
+        ymov = 0
+        
+        if self.keyMap["w"]:
+            ymov = -40
+        if self.keyMap["s"]:
+            ymov = 40
+        if self.keyMap["a"]:
+            xmov = -40
+        if self.keyMap["d"]:
+            xmov = 40   
             
-            # Create a handle for pointer device #0
-            m = base.win.getPointer( 0 )
-            # Get the absolute [x,y] screen coordinates of the cursor
-            x = m.getX( )
-            y = m.getY( )
+        if base.win.movePointer( 0, centerx, centery ):
+               xmov += ( x - centerx ) * 2
+               ymov += ( y - centery ) * 2
 
-            centerx = 400
-            centery = 300
-
+        self.xspeed = self.xspeed + ( (xmov - self.xspeed) * .1)
+        self.yspeed = self.yspeed + ( (ymov - self.yspeed) * .1)
+          
+        self.env.setR(self.env.getR() + elapsed * -self.xspeed)
+        self.env.setP(self.env.getP() + elapsed * -self.yspeed)
+     
+        self.saucer.ship.setR(-self.xspeed * .1)
+        self.saucer.ship.setP(-self.yspeed * .1)
             
-            if base.win.movePointer( 0, centerx, centery ):
-                   xmov = ( x - centerx ) * 1.5
-                   ymov = ( y - centery ) * 1.5
-
-            self.xspeed = self.xspeed + ( (xmov - self.xspeed) * .1)
-            self.yspeed = self.yspeed + ( (ymov - self.yspeed) * .1)
-              
-            self.env.setR(self.env.getR() + elapsed * -self.xspeed)
-            self.env.setP(self.env.getP() + elapsed * -self.yspeed)
-         
-            self.saucer.ship.setR(-self.xspeed * .1)
-            self.saucer.ship.setP(-self.yspeed * .1)
-                
-            return Task.cont
+        return Task.cont
             
     def loadModels(self):
         self.env = loader.loadModel("smiley")
