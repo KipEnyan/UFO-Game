@@ -27,11 +27,18 @@ class World(DirectObject):
         self.accept("arrow_right-up", self.setKey, ["right", 0])
         self.accept("arrow_left-up", self.setKey, ["left", 0])
         
+        self.setupWASD()
+        
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
         self.xspeed = 0
         self.yspeed = 0
         camera.lookAt(self.saucer.ship)
 
+    def setupWASD(self):
+        self.accept("w", self.setKey, ["right", 1])
+        self.accept("s", self.setKey, ["left", 1])
+        self.accept("w-up", self.setKey, ["right", 0])
+        self.accept("s-up", self.setKey, ["left", 0])
         
     def setKey(self, key, value):
         self.keyMap[key] = value
