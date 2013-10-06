@@ -98,8 +98,8 @@ class World(DirectObject):
         self.env.setR(self.env.getR() + elapsed * -self.xspeed)
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
      
-        self.saucer.ship.setR(-self.xspeed * .1)
-        self.saucer.ship.setP(-self.yspeed * .1)
+        self.saucer.ship.setR(self.xspeed * .2)
+        self.saucer.ship.setP(self.yspeed * .2)
             
         return Task.cont
             
