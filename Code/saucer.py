@@ -14,3 +14,18 @@ class Saucer(DirectObject):
         self.ship.setH(180)
         self.ship.setPos(0,0,15)
         
+        #list of things currently abducting
+        self.abductlist = []
+        
+    def pickUp(self,object):   #Pick up another pickupable
+        if len(self.abductlist < 5):
+            object.abduct = True
+            self.abductlist.append(object)
+        else:
+            print ("Pickup list full.")
+    
+    def drop(self): #Drop all
+        for object in self.abductlist:
+            object.abduct = False
+        self.abductlist = []
+        
