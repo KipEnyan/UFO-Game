@@ -8,10 +8,10 @@ import sys, math, random
 
 class Saucer(DirectObject):
     def __init__(self):
-        self.ship = Actor("panda-model", {"walk":"panda-walk4"})
+        self.ship = loader.loadModel("Art\ufo.egg")
         self.ship.reparentTo(render)
-        self.ship.setScale(0.005)
-        self.ship.setH(180)
+        self.ship.setScale(1)
+        #self.ship.setH(180)
         self.ship.setPos(0,0,15)
         
         #list of things currently abducting
