@@ -7,6 +7,7 @@ from direct.task import Task         #for update functions
 import sys, math, random
 
 from saucer import*
+from pickupable import*
 
 class World(DirectObject):
     def __init__(self):
@@ -42,6 +43,11 @@ class World(DirectObject):
         self.xspeed = 0
         self.yspeed = 0
         camera.lookAt(self.saucer.ship)
+        
+        #For recycler
+        self.currentpickupable = 0
+        
+        
 
     def setupWASD(self):
         self.accept("w", self.setKey, ["w", 1])
@@ -92,8 +98,8 @@ class World(DirectObject):
         self.env.setR(self.env.getR() + elapsed * -self.xspeed)
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
      
-        self.saucer.ship.setR(-self.xspeed * .1)
-        self.saucer.ship.setP(-self.yspeed * .1)
+        self.saucer.ship.setR(self.xspeed * .2)
+        self.saucer.ship.setP(self.yspeed * .2)
             
         return Task.cont
             
@@ -103,8 +109,34 @@ class World(DirectObject):
         self.env.setScale(30)
         self.env.setPos(0, 0, -20)
         
-        #load targets
-        self.targets = []
+    def loadPickupables(self):
+        #This function just loads a bunch of pickupables of random types.
+        
+        self.pickupables = []
+        self.possibletypes = ['animal','inanimate','hostile']
+        self.animaltypes = ['cow','pig','panda']
+        self.inanimatetypes = ['house','car','tree']
+        self.hostiletypes = ['tank','helicopter','launcher']
+        for x in range(30):
+            temp = Pickupable()
+            type = random.choice(possibletypes)
+            if type == 'animal':
+                type2 = random.choice(animaltypes)
+                temp.setType(type,type2)
+            elif type == 'inanimate':
+                type2 = random.choice(inanimatetypes)
+                temp.setType(type,type2)
+            elif type == 'hostile':
+                type2 = random.choice(hostiletypes)
+                temp.setType(type,type2)
+                
+        self.pickupables.append(temp)
+        
+    def spawnPickupable(self):  #Spawn the next pickupable in line from pickupable list
+        self.pickupables[self.currentpickupable].alive = True
+        self.currentpickupable += 1
+        if self.currentpickupable > (len(self.pickupables) - 1):
+            self.currentpickupable = 0
         
     def setupLights(self):
         """loads initial lighting"""
