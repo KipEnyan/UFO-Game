@@ -14,7 +14,7 @@ class World(DirectObject):
 
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -30, 55, 0, -15, 0)
+        camera.setPosHpr(0, -40, 55, 0, -15, 0)
         self.loadModels()
 
         
@@ -108,6 +108,26 @@ class World(DirectObject):
         self.env.reparentTo(render)
         self.env.setScale(30)
         self.env.setPos(0, 0, -20)
+        
+        
+        #Shadow Code:
+        proj = render.attachNewNode(LensNode('proj'))
+        lens = PerspectiveLens()
+        proj.node().setLens(lens)
+        #The following is for debugging:
+        #proj.node().showFrustum()  
+        #proj.find('frustum').setColor(1, 0, 0, 1)
+        proj.reparentTo(render)
+        proj.setPos(self.saucer.ship.getPos())
+        proj.setHpr(0,-90,0)
+        tex = loader.loadTexture('Art\UFO_Shadow.png')
+        tex.setWrapU(Texture.WMBorderColor)
+        tex.setWrapV(Texture.WMBorderColor)
+        tex.setBorderColor(VBase4(1, 1, 1, 0))
+        ts = TextureStage('ts')
+        ts.setSort(1)
+        ts.setMode(TextureStage.MDecal)
+        self.env.projectTexture(ts, tex, proj)
         
     def loadPickupables(self):
         #This function just loads a bunch of pickupables of random types.
