@@ -37,6 +37,9 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
         
         
+        
+        
+        
         self.setupWASD()
         
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
@@ -83,6 +86,7 @@ class World(DirectObject):
             ymov = -40
         if self.keyMap["s"]:
             ymov = 40
+            
         if self.keyMap["a"]:
             xmov = -40
         if self.keyMap["d"]:
