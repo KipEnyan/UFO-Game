@@ -66,8 +66,8 @@ class Pickupable(DirectObject):
         pickup.detachNode()
         self.alive = False
         
-    def moveTask(self): #Responsible for falling when dropped, walking around(??)
-        if abduct == False:
+    def moveTask(self,task): #Responsible for falling when dropped, walking around(??)
+        if self.abduct == False:
             if self.height > 0:
                 self.fallspeed = self.fallspeed + ((.5 - self.fallspeed) * .05)
                 self.height -= self.fallspeed
