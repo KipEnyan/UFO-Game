@@ -1,3 +1,4 @@
+from pyPad360 import*
 import direct.directbase.DirectStart #starts Panda
 from pandac.PandaModules import *    #basic Panda modules
 from direct.showbase.DirectObject import DirectObject  #for event handling
@@ -9,6 +10,8 @@ import sys, math, random
 from saucer import*
 from pickupable import*
 
+del base
+
 class World(DirectObject):
     def __init__(self):
 
@@ -17,6 +20,12 @@ class World(DirectObject):
         camera.setPosHpr(0, -40, 55, 0, -15, 0)
         self.loadModels()
 
+        ###
+        gamepads = pyPad360()
+        gamepads.setupGamepads()
+        taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
+        self.gameControls360()
+        ####
         
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
@@ -50,7 +59,38 @@ class World(DirectObject):
         #For recycler
         self.currentpickupable = 0
         
+        ################
+    def gameControls360(self):   
+        #Accept each message and do something based on the button
+        self.accept("C1_DPAD_UP", self.setKey, ["w", 1])
+        self.accept("C1_DPAD_DOWN", self.setKey,["s",1])
+        self.accept("C1_DPAD_LEFT", self.setKey, ["a", 1])
+        self.accept("C1_DPAD_RIGHT", self.setKey, ["d", 1])
+        self.accept("C1_DPAD_NONE", self.stop,["w",0,"s",0,"a",0,"d",0])
+        self.accept("C1_DPAD_UPLEFT", self.diagkeys, ["w",1,"a",1])
+        self.accept("C1_DPAD_UPRIGHT", self.diagkeys, ["w",1,"d",1])
+        self.accept("C1_DPAD_DOWNLEFT", self.diagkeys, ["s",1,"a",1])
+        self.accept("C1_DPAD_DOWNRIGHT", self.diagkeys, ["s",1,"d",1])
         
+        self.accept("C1_LSTICK_HARDUP", self.setKey, ["w", 1])
+        self.accept("C1_LSTICK_SLIGHTUP", self.setKey, ["w", 0])
+        self.accept("C1_LSTICK_HARDDOWN", self.setKey,["s",1])
+        self.accept("C1_LSTICK_SLIGHTDOWN", self.setKey,["s",0])
+        self.accept("C1_LSTICK_HARDLEFT", self.setKey, ["a", 1])
+        self.accept("C1_LSTICK_SLIGHTLEFT", self.setKey, ["a", 0])
+        self.accept("C1_LSTICK_HARDRIGHT", self.setKey, ["d", 1])
+        self.accept("C1_LSTICK_SLIGHTRIGHT", self.setKey, ["d", 0])
+        
+        
+    def stop(self, key1, value1, key2, value2, key3, value3, key4, value4):
+        self.keyMap[key1] = value1
+        self.keyMap[key2] = value2
+        self.keyMap[key3] = value3
+        self.keyMap[key4] = value4
+    def diagkeys(self, key1, value1, key2, value2):
+        self.keyMap[key1] = value1
+        self.keyMap[key2] = value2 
+        ####################   
 
     def setupWASD(self):
         self.accept("w", self.setKey, ["w", 1])
