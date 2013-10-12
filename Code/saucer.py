@@ -21,6 +21,7 @@ class Saucer(DirectObject):
         if len(self.abductlist < 5):
             object.abduct = True
             self.abductlist.append(object)
+            object.playAnimalSound()
         else:
             print ("Pickup list full.")
     
