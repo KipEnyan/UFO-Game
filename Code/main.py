@@ -5,6 +5,9 @@ from direct.showbase.DirectObject import DirectObject  #for event handling
 from direct.actor.Actor import Actor #for animated models
 from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
+from direct.gui.OnscreenText import OnscreenText
+from direct.gui.OnscreenImage import OnscreenImage
+
 import sys, math, random
 
 from saucer import*
@@ -139,7 +142,42 @@ class World(DirectObject):
         ts.setSort(1)
         ts.setMode(TextureStage.MDecal)
         self.env.projectTexture(ts, tex, proj)
+
+    def loadHUD(self):
+        #Draw image as outline for timer
+        timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
+       
+        #Draw num of animals left
+        num = str(200000)
+        AnimalsLeft = OnscreenText(text="Animals Left:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
+        self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(0,0,0,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
+       
+       #Draw time        
+        t = "0:00"
+        self.TimeText = OnscreenText(text=t,style=1, fg=(0,0,0,1),pos=(1,0.85), scale = .09, mayChange = 1, align = TextNode.ALeft)
+
+    def dCharstr(self,number):
+        theString = str(number)
+        if len(theString) != 2:
+            theString = '0' + theString
+        return theString
         
+    def textTask(self,task):
+        secondsTime = int(task.time)
+        minutesTime = int(secondsTime/60)
+        
+        self.seconds = secondsTime%60
+        self.minutes = minutesTime
+        
+        self.mytimer = str(self.minutes) + ":" + self.dCharstr(int(self.seconds))
+       #self.mytimer = str(self.seconds)
+
+        self.TimeText.setText(self.mytimer)
+        
+        
+        self.AnimalsLeftText.setText(str(self.animalsleft))
+        return Task.cont
+    
     def loadPickupables(self):
         #This function just loads a bunch of pickupables of random types.
         
