@@ -4,7 +4,7 @@
   "maya2egg2013 -p -keep-uvs -round-uvs -tbnall -a none -cs y-up -uo cm -trans all -o 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1.egg' 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1_temp.mb'"
 }
 <Texture> blinn3SG {
-  "images/cow_texture.png"
+  "Art/images/cow_texture.png"
   <Scalar> format { rgb }
   <Scalar> wrapu { repeat }
   <Scalar> wrapv { repeat }
