@@ -8,6 +8,7 @@ import sys, math, random
 
 class Saucer(DirectObject):
     def __init__(self):
+    
         self.ship = loader.loadModel("Art\ufo.egg")
         self.ship.reparentTo(render)
         self.ship.setScale(1)
