@@ -12,7 +12,7 @@ class Saucer(DirectObject):
         self.ship.reparentTo(render)
         self.ship.setScale(1)
         #self.ship.setH(180)
-        self.ship.setPos(0,0,15)
+        self.ship.setPos(0,0,0)
         
         #list of things currently abducting
         self.abductlist = []
@@ -21,6 +21,7 @@ class Saucer(DirectObject):
         if len(self.abductlist < 5):
             object.abduct = True
             self.abductlist.append(object)
+            object.playAnimalSound()
         else:
             print ("Pickup list full.")
     

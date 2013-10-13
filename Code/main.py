@@ -1,3 +1,4 @@
+from pyPad360 import*
 import direct.directbase.DirectStart #starts Panda
 from pandac.PandaModules import *    #basic Panda modules
 from direct.showbase.DirectObject import DirectObject  #for event handling
@@ -9,15 +10,16 @@ import sys, math, random
 from saucer import*
 from pickupable import*
 
+del base
+
 class World(DirectObject):
     def __init__(self):
 
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -40, 55, 0, -15, 0)
+        camera.setPosHpr(0, -40, 80, 0, -15, 0)
         self.loadModels()
 
-        
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
         self.prevtime = 0
@@ -37,16 +39,18 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
         
         
+        
+        
+        
         self.setupWASD()
         
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
         self.xspeed = 0
         self.yspeed = 0
         camera.lookAt(self.saucer.ship)
-        
         #For recycler
+        self.xbounds = 92
         self.currentpickupable = 0
-        
         
 
     def setupWASD(self):
@@ -92,31 +96,39 @@ class World(DirectObject):
                xmov += ( x - centerx ) * 2
                ymov += ( y - centery ) * 2
 
+        if self.env.getX() > self.xbounds:
+            if xmov < 0:
+                xmov = 0
+        elif self.env.getX() < -self.xbounds:
+            if xmov > 0:
+                xmov = 0
+               
         self.xspeed = self.xspeed + ( (xmov - self.xspeed) * .1)
         self.yspeed = self.yspeed + ( (ymov - self.yspeed) * .1)
           
-        self.env.setR(self.env.getR() + elapsed * -self.xspeed)
+          
+        self.env.setX(self.env.getX() + elapsed * -self.xspeed)
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
      
         self.saucer.ship.setR(self.xspeed * .2)
         self.saucer.ship.setP(self.yspeed * .2)
             
+        print self.env.getX()
         return Task.cont
             
     def loadModels(self):
-        self.env = loader.loadModel("smiley")
+        self.env = loader.loadModel("Art/cylinder.egg")
         self.env.reparentTo(render)
-        self.env.setScale(30)
-        self.env.setPos(0, 0, -20)
-        
+        self.env.setScale(40)
+        self.env.setPos(0, 0, -55)
         
         #Shadow Code:
         proj = render.attachNewNode(LensNode('proj'))
         lens = PerspectiveLens()
         proj.node().setLens(lens)
         #The following is for debugging:
-        #proj.node().showFrustum()  
-        #proj.find('frustum').setColor(1, 0, 0, 1)
+        proj.node().showFrustum()  
+        proj.find('frustum').setColor(1, 0, 0, 1)
         proj.reparentTo(render)
         proj.setPos(self.saucer.ship.getPos())
         proj.setHpr(0,-90,0)
