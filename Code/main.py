@@ -9,6 +9,7 @@ from direct.gui.OnscreenText import OnscreenText
 from direct.gui.OnscreenImage import OnscreenImage
 
 import sys, math, random
+import os
 
 from saucer import*
 from pickupable import*
@@ -60,6 +61,7 @@ class World(DirectObject):
         #For recycler
         self.xbounds = 92
         self.currentpickupable = 0
+        self.loadLevel()
         
     def gameControls360(self):   
         #Accept each message and do something based on the button
@@ -104,7 +106,50 @@ class World(DirectObject):
         self.accept("d", self.setKey, ["d", 1])
         self.accept("d-up", self.setKey, ["d", 0])
             
+    def loadLevel(self):
+        self.map = open("C:\Users\Vanded3\Documents\ufo-game\Code\map.txt")
+        #self.map = open(os.path.join(__location__, 'map.txt'));
+        #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
+        self.map = [line.rstrip() for line in self.map]
+        #self.terrainlist = []
+        tsize = 1
+                
+        self.pickupables = []
+        #self.animals = []
+        #self.inanimates = []
+        #self.hostiles = []
+        worldhalfwidth = 1
         
+        for i, row in enumerate(self.map):
+            for j, column in enumerate(row):
+                if column == "0":
+                    pass
+                if column == "C":
+                    temp = Pickupable()
+                    temp.setType("animal","cow")
+                    temp.pickup.setScale(.1)
+                    angle = i * .1
+                    y = 1 * math.cos(angle)
+                    z = 1 * math.sin(angle)
+                    
+                    temp.pickup.setPos(worldhalfwidth - (j * tsize), y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    print rotangle
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    
+                    self.pickupables.append(temp)
+        print len(self.pickupables)
+            
+      
+            
+             
+
+
+
+
+    
     def setKey(self, key, value):
         self.keyMap[key] = value
         
@@ -126,6 +171,7 @@ class World(DirectObject):
         
         if self.keyMap["w"]:
             ymov = -40
+            self.test.playAnimalSound()
         if self.keyMap["s"]:
             ymov = 40
         if self.keyMap["a"]:
@@ -221,6 +267,10 @@ class World(DirectObject):
         #This function just loads a bunch of pickupables of random types.
         
         self.pickupables = []
+        self.animals = []
+        self.inanimates = []
+        self.hostiles = []
+        
         self.possibletypes = ['animal','inanimate','hostile']
         self.animaltypes = ['cow','pig','panda']
         self.inanimatetypes = ['house','car','tree']
@@ -237,8 +287,7 @@ class World(DirectObject):
             elif type == 'hostile':
                 type2 = random.choice(hostiletypes)
                 temp.setType(type,type2)
-                
-        self.pickupables.append(temp)
+            self.pickupables.append(temp)
         
     def spawnPickupable(self):  #Spawn the next pickupable in line from pickupable list
         self.pickupables[self.currentpickupable].alive = True

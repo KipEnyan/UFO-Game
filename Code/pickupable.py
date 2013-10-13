@@ -4,7 +4,7 @@ from direct.showbase.DirectObject import DirectObject  #for event handling
 from direct.actor.Actor import Actor #for animated models
 from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
-import sys, math, random
+import sys, math, os, random
 
 class Pickupable(DirectObject):
     def __init__(self):
@@ -22,7 +22,7 @@ class Pickupable(DirectObject):
         #Linked to how fast it is sucked up
         self.weight = 1
         self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
-
+        #self.pickup.setScale(1)
     
         #code to add sounds
         #thebase = ShowBase()
@@ -94,7 +94,7 @@ class Pickupable(DirectObject):
         if self.type2 == 'cow':
             randSound = random.choice(self.cowsounds)
             randSound.play()
-            print 'HECK YEAH'
+            
         if self.type2 == 'panda':
             randSound = random.choice(self.pandasounds)
             randSound.play()
