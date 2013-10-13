@@ -49,7 +49,6 @@ class World(DirectObject):
         
         #For recycler
         self.currentpickupable = 0
-        
         self.xbounds = 92
 
     def setupWASD(self):
