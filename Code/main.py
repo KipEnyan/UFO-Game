@@ -61,6 +61,7 @@ class World(DirectObject):
         #For recycler
         self.xbounds = 92
         self.currentpickupable = 0
+        self.loadLevel()
         
         
 
