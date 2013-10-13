@@ -19,7 +19,6 @@ class World(DirectObject):
         base.disableMouse()
         camera.setPosHpr(0, -40, 80, 0, -15, 0)
         self.loadModels()
-
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
         self.prevtime = 0
