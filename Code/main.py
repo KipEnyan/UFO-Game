@@ -6,7 +6,7 @@ from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.OnscreenImage import OnscreenImage
-
+import sys, math, random, os
 from saucer import*
 from pickupable import*
 
@@ -17,8 +17,6 @@ class World(DirectObject):
         base.disableMouse()
         camera.setPosHpr(0, -30, 55, 0, -15, 0)
         self.loadModels()
-        #temp pickupable to test sounds
-        self.test = Pickupable()
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
         self.prevtime = 0
