@@ -6,7 +6,6 @@ from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.OnscreenImage import OnscreenImage
-import sys, math, random, os
 
 from saucer import*
 from pickupable import*
