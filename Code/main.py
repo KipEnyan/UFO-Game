@@ -1,3 +1,4 @@
+from pyPad360 import*
 import direct.directbase.DirectStart #starts Panda
 from pandac.PandaModules import *    #basic Panda modules
 from direct.showbase.DirectObject import DirectObject  #for event handling
@@ -6,21 +7,34 @@ from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.OnscreenImage import OnscreenImage
-import sys, math, random, os
+
+import sys, math, random
+import os
+
 from saucer import*
 from pickupable import*
+
+del base
 
 class World(DirectObject):
     def __init__(self):
 
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -30, 55, 0, -15, 0)
+        camera.setPosHpr(0, -40, 80, 0, -15, 0)
         self.loadModels()
+        self.loadHUD()
+        
+        gamepads = pyPad360()
+        gamepads.setupGamepads()
+        taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
+        self.gameControls360()
+        
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
         self.prevtime = 0
         self.accept("escape", sys.exit)
+        
         self.accept("arrow_right", self.setKey, ["right", 1])
         self.accept("arrow_left", self.setKey, ["left", 1])
         self.accept("arrow_right-up", self.setKey, ["right", 0])
@@ -35,7 +49,8 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
         
         
-        self.loadLevel()
+        
+        
         
         self.setupWASD()
         
@@ -43,8 +58,8 @@ class World(DirectObject):
         self.xspeed = 0
         self.yspeed = 0
         camera.lookAt(self.saucer.ship)
-        
         #For recycler
+        self.xbounds = 92
         self.currentpickupable = 0
         
         
