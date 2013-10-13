@@ -4,7 +4,7 @@
   "maya2egg2013 -p -keep-uvs -round-uvs -tbnall -a both -cs y-up -uo cm -trans all -o 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1.egg' 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1_temp.mb'"
 }
 <Texture> blinn2SG {
-  "Art/images/ufo_texture.jpg"
+  "Art/ufo_texture.jpg"
   <Scalar> wrapu { repeat }
   <Scalar> wrapv { repeat }
   <Scalar> minfilter { linear_mipmap_linear }
