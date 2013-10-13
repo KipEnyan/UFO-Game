@@ -18,9 +18,9 @@ class World(DirectObject):
         self.saucer = Saucer()
         base.disableMouse()
         camera.setPosHpr(0, -40, 55, 0, -15, 0)
-        self.loadHUD()
         self.loadModels()
 
+        self.loadHUD()
         
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
@@ -50,11 +50,11 @@ class World(DirectObject):
         
         #For recycler
         self.currentpickupable = 0
-        
         taskMgr.add(self.textTask, "textTask")
         self.seconds = 0
         self.minutes = 0
         self.animalsleft = 0
+
 
 
     def setupWASD(self):
