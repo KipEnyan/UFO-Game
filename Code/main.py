@@ -46,10 +46,10 @@ class World(DirectObject):
         self.xspeed = 0
         self.yspeed = 0
         camera.lookAt(self.saucer.ship)
-        
         #For recycler
-        self.currentpickupable = 0
         self.xbounds = 92
+        self.currentpickupable = 0
+        
 
     def setupWASD(self):
         self.accept("w", self.setKey, ["w", 1])
