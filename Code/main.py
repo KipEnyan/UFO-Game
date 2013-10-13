@@ -17,7 +17,7 @@ class World(DirectObject):
 
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -40, 55, 0, -15, 0)
+        camera.setPosHpr(0, -40, 80, 0, -15, 0)
         self.loadModels()
 
         self.setupLights()
@@ -48,8 +48,8 @@ class World(DirectObject):
         self.xspeed = 0
         self.yspeed = 0
         camera.lookAt(self.saucer.ship)
-        
         #For recycler
+        self.xbounds = 92
         self.currentpickupable = 0
         
 
@@ -87,7 +87,6 @@ class World(DirectObject):
             ymov = -40
         if self.keyMap["s"]:
             ymov = 40
-            
         if self.keyMap["a"]:
             xmov = -40
         if self.keyMap["d"]:
@@ -97,31 +96,39 @@ class World(DirectObject):
                xmov += ( x - centerx ) * 2
                ymov += ( y - centery ) * 2
 
+        if self.env.getX() > self.xbounds:
+            if xmov < 0:
+                xmov = 0
+        elif self.env.getX() < -self.xbounds:
+            if xmov > 0:
+                xmov = 0
+               
         self.xspeed = self.xspeed + ( (xmov - self.xspeed) * .1)
         self.yspeed = self.yspeed + ( (ymov - self.yspeed) * .1)
           
-        self.env.setR(self.env.getR() + elapsed * -self.xspeed)
+          
+        self.env.setX(self.env.getX() + elapsed * -self.xspeed)
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
      
         self.saucer.ship.setR(self.xspeed * .2)
         self.saucer.ship.setP(self.yspeed * .2)
             
+        print self.env.getX()
         return Task.cont
             
     def loadModels(self):
-        self.env = loader.loadModel("smiley")
+        self.env = loader.loadModel("Art/cylinder.egg")
         self.env.reparentTo(render)
-        self.env.setScale(30)
-        self.env.setPos(0, 0, -20)
-        
+        self.env.setScale(40)
+        self.env.setPos(0, 0, -55)
         
         #Shadow Code:
         proj = render.attachNewNode(LensNode('proj'))
         lens = PerspectiveLens()
         proj.node().setLens(lens)
         #The following is for debugging:
-        #proj.node().showFrustum()  
-        #proj.find('frustum').setColor(1, 0, 0, 1)
+        proj.node().showFrustum()  
+        proj.find('frustum').setColor(1, 0, 0, 1)
         proj.reparentTo(render)
         proj.setPos(self.saucer.ship.getPos())
         proj.setHpr(0,-90,0)
