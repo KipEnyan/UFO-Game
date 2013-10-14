@@ -56,11 +56,17 @@ class Pickupable(DirectObject):
         #Being abducted?
         self.abduct = False 
         #When pickupable height reaches this level, it is abducted.
-        self.abductheight = 30
+        self.abductheight = 25
         
         #Height off of ground
         self.height = 0
         self.fallspeed = 0
+        self.stunned = False
+        self.lr = False
+        self.shakex = 0
+        self.shakey = 0 
+        self.shakez = 0
+        self.stuncount =0
         taskMgr.add(self.moveTask, "moveTask")
         
     def setType(self,type,type2):
@@ -82,10 +88,21 @@ class Pickupable(DirectObject):
         self.pickup.reparentTo(render)
         self.pickup.setPos(0,0,0)
         
-    def rise(self): #The ship should call this in one of its tasks on every animal that it is currently abducting.   
-        self.height += .1 * self.weight
+    def rise(self,ship): #The ship should call this in one of its tasks on every animal that it is currently abducting. 
+        self.stunned = False
+        self.lr = False
+        self.stuncount = 0
+        self.myship = ship
+        self.height += .02 * self.weight
+        self.pickup.setZ(-26 + self.height)
+        
+        if type == 'animal':
+            self.pickup.setHpr(self.pickup.getH() + 1,self.pickup.getP() + 1,self.pickup.getR() + 1)
+        else:   
+            self.pickup.setHpr(self.pickup.getH() + .1,self.pickup.getP() + .1,self.pickup.getR() + .1)
         if self.height >= self.abductheight:
             self.abducted()
+        
     
     def playAnimalSound(self):
         if self.type2 == 'pig':
@@ -109,10 +126,26 @@ class Pickupable(DirectObject):
         self.die()
     
     def die(self):      #Set self to dead, remove from render node. For recycler.
-        pickup.detachNode()
+        self.pickup.detachNode()
+        self.pickup.remove()
+        if self in self.myship.abductlist: 
+            self.myship.abductlist.remove(self)
         self.alive = False
         
     def moveTask(self,task): #Responsible for falling when dropped, walking around(??)
+        if self.stunned:
+            if self.lr == False:
+                self.lr = True
+                self.shakex = self.pickup.getX()
+                self.shakey = self.pickup.getY()
+                self.shakez = self.pickup.getZ()
+            else:
+                self.pickup.setPos(self.shakex + random.uniform(-.1,.1),self.shakey + random.uniform(-.1,.1),self.shakez + random.uniform(-.1,.1))
+            self.stuncount += 1
+            if self.stuncount > 60:
+                self.resetStun()
+                
+        
         if self.abduct == False:
             if self.height > 0:
                 self.fallspeed = self.fallspeed + ((.5 - self.fallspeed) * .05)
@@ -120,3 +153,12 @@ class Pickupable(DirectObject):
             elif self.height  < 0:
                 self.height  == 0
             
+        return task.cont
+        
+    def resetStun(self):
+        self.stunned = False
+        self.lr = False
+        self.stuncount = 0
+        self.pickup.setPos(self.shakex,self.shakey,self.shakez)
+
+    

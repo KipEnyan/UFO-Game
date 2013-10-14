@@ -50,19 +50,28 @@ class World(DirectObject):
         self.accept("d", self.setKey, ["d", 1])
         self.accept("d-up", self.setKey, ["d", 0])
         
-        
+
+
         
         
         
         self.setupWASD()
         
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
+        
+        self.animalsleft = 2
+        
+        taskMgr.add(self.textTask, "textTask")
+
         self.xspeed = 0
         self.yspeed = 0
         #For recycler
         self.xbounds = 160
         self.currentpickupable = 0
         self.loadLevel()
+        
+        self.setupCollisions()
+        self.accept("beam-pickupable", self.beamCollide)
         
     def gameControls360(self):   
         #Accept each message and do something based on the button
@@ -109,8 +118,8 @@ class World(DirectObject):
             
     def loadLevel(self):
         #self.map = open("C:\Users\Vanded3\Documents\ufo-game\Code\map.txt")
-        self.map = resource_path(os.path.join("Levels", "map.txt"))
-        #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
+        #self.map = resource_path(os.path.join("Levels", "map.txt"))
+        self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
         tsize = 1
@@ -120,7 +129,7 @@ class World(DirectObject):
         #self.inanimates = []
         #self.hostiles = []
         worldhalfwidth = 1
-        worldradius = 42
+        worldradius = 43
         
         for i, row in enumerate(self.map):
             for j, column in enumerate(row):
@@ -129,7 +138,7 @@ class World(DirectObject):
                 if column == "C":
                     temp = Pickupable()
                     temp.setType("animal","cow")
-                    temp.pickup.setScale(10)
+                    temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
                     z = worldradius * math.sin(angle)
@@ -196,11 +205,13 @@ class World(DirectObject):
           
         self.env.setX(self.env.getX() + elapsed * -self.xspeed)
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
+        
+        self.skybox.setX(self.skybox.getX() + elapsed * -.3 * self.xspeed)
      
         self.saucer.ship.setR(self.xspeed * .2)
         self.saucer.ship.setP(self.yspeed * .2)
             
-        print self.env.getX()
+        #print self.env.getX()
         return Task.cont
             
     def loadModels(self):
@@ -209,15 +220,23 @@ class World(DirectObject):
         self.env.setScale(1)
         self.env.setPos(0, 0, -55)
         
+        self.skybox = loader.loadModel("Art/skybox.egg")
+        self.skybox.reparentTo(render)
+        self.skybox.setScale(1)
+        self.skybox.setPos(0, 0, 0)
+        self.skybox.setHpr(0,-60,0)
+        
+        
         #Shadow Code:
         proj = render.attachNewNode(LensNode('proj'))
         lens = PerspectiveLens()
         proj.node().setLens(lens)
         #The following is for debugging:
-        proj.node().showFrustum()  
-        proj.find('frustum').setColor(1, 0, 0, 1)
+        #proj.node().showFrustum()  
+        #proj.find('frustum').setColor(1, 0, 0, 1)
         proj.reparentTo(render)
         proj.setPos(self.saucer.ship.getPos())
+        proj.setZ(-2)
         proj.setHpr(0,-90,0)
         tex = loader.loadTexture('Art\UFO_Shadow.png')
         tex.setWrapU(Texture.WMBorderColor)
@@ -311,7 +330,41 @@ class World(DirectObject):
         self.ambientLightNP = render.attachNewNode(self.ambientLight)
         render.setLight(self.ambientLightNP)
         
-      
+    def setupCollisions(self):
+        #make a collision traverser
+        base.cTrav = CollisionTraverser()
+        #set the collision handler to send event messages on collision
+        self.cHandler = CollisionHandlerEvent()
+        # %in is substituted with the name of the into object
+        self.cHandler.setInPattern("beam-%in")
+        
+        #saucer collider
+        cSphere = CollisionSphere((0,0,0), 2)
+        cNode = CollisionNode("beam")
+        cNode.addSolid(cSphere)
+        #set to only be a "from" object
+        cNode.setIntoCollideMask(BitMask32.allOff())
+        cNodePath = self.saucer.dummy.attachNewNode(cNode)
+        cNodePath.setZ(-25)
+        #cNodePath.show()
+        base.cTrav.addCollider(cNodePath, self.cHandler)
+        
+        #target colliders
+        for p in self.pickupables:
+            cSphere = CollisionSphere((0,0,0), .5)
+            cNode = CollisionNode("pickupable")
+            cNode.addSolid(cSphere)
+            cNodePath = p.pickup.attachNewNode(cNode)
+            cNodePath.show()
+    
+    def beamCollide(self, cEntry):
+        obj = cEntry.getIntoNodePath().getParent()
+        
+        for x in self.pickupables:
+            if (x.pickup == obj):
+                self.saucer.pickUp(x)
+                return
+
         
 w = World()
 run()
