@@ -1,0 +1,80 @@
+<CoordinateSystem> { Y-Up }
+
+<Comment> {
+  "maya2egg2013 -p -keep-uvs -round-uvs -tbnall -a none -cs y-up -uo cm -trans all -o 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1.egg' 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1_temp.mb'"
+}
+<Texture> phong4SG {
+  "Art/images/skybox_texture.png"
+  <Scalar> format { rgb }
+  <Scalar> wrapu { repeat }
+  <Scalar> wrapv { repeat }
+  <Scalar> minfilter { linear_mipmap_linear }
+  <Scalar> magfilter { linear }
+}
+<Group> groundPlane_transform {
+  <Transform> {
+    <Matrix4> {
+      12 0 0 0
+      0 0 12 0
+      0 -1 0 0
+      0 0 0 1
+    }
+  }
+}
+<Group> skybox {
+  <Transform> {
+    <Matrix4> {
+      387.507 0 0 0
+      0 387.507 0 0
+      0 0 387.507 0
+      0 27.6466 -78.4947 1
+    }
+  }
+  <VertexPool> skyboxShape.verts {
+    <Vertex> 0 {
+      -327.809 -38.7091 -78.4947
+      <UV> {
+        0.000402629 0.00202447
+        <Tangent> { 0 1 0 }
+        <Binormal> { 1 0 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 1 {
+      -327.809 94.0023 -78.4947
+      <UV> {
+        0.201925 0.00202447
+        <Tangent> { 0 1 0 }
+        <Binormal> { 1 0 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 2 {
+      327.809 -38.7091 -78.4947
+      <UV> {
+        0.0004026 0.99804
+        <Tangent> { -2.95635e-007 1 0 }
+        <Binormal> { 1 2.95635e-007 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 3 {
+      327.809 94.0023 -78.4947
+      <UV> {
+        0.201925 0.99804
+        <Tangent> { -2.95635e-007 1 0 }
+        <Binormal> { 1 2.95635e-007 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+  }
+  <Polygon> {
+    <Normal> { 0 0 1 }
+    <TRef> { phong4SG }
+    <VertexRef> { 1 0 2 3 <Ref> { skyboxShape.verts } }
+  }
+}
