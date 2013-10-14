@@ -10,7 +10,7 @@ from direct.gui.OnscreenImage import OnscreenImage
 
 import sys, math, random
 import os
-
+from utilities import resource_path
 from saucer import*
 from pickupable import*
 
@@ -21,7 +21,9 @@ class World(DirectObject):
 
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -40, 80, 0, -15, 0)
+        camera.setPosHpr(0, -55, 65, 0, 50, 0)
+        camera.lookAt(self.saucer.ship)
+        camera.setP(camera.getP() - 5)
         self.loadModels()
         self.loadHUD()
         
@@ -57,9 +59,8 @@ class World(DirectObject):
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
         self.xspeed = 0
         self.yspeed = 0
-        camera.lookAt(self.saucer.ship)
         #For recycler
-        self.xbounds = 92
+        self.xbounds = 160
         self.currentpickupable = 0
         self.loadLevel()
         
@@ -107,8 +108,8 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
             
     def loadLevel(self):
-        self.map = open("C:\Users\Vanded3\Documents\ufo-game\Code\map.txt")
-        #self.map = open(os.path.join(__location__, 'map.txt'));
+        #self.map = open("C:\Users\Vanded3\Documents\ufo-game\Code\map.txt")
+        self.map = resource_path(os.path.join("Levels", "map.txt"))
         #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
@@ -119,6 +120,7 @@ class World(DirectObject):
         #self.inanimates = []
         #self.hostiles = []
         worldhalfwidth = 1
+        worldradius = 42
         
         for i, row in enumerate(self.map):
             for j, column in enumerate(row):
@@ -127,14 +129,13 @@ class World(DirectObject):
                 if column == "C":
                     temp = Pickupable()
                     temp.setType("animal","cow")
-                    temp.pickup.setScale(.1)
+                    temp.pickup.setScale(10)
                     angle = i * .1
-                    y = 1 * math.cos(angle)
-                    z = 1 * math.sin(angle)
+                    y = worldradius * math.cos(angle)
+                    z = worldradius * math.sin(angle)
                     
                     temp.pickup.setPos(worldhalfwidth - (j * tsize), y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
-                    print rotangle
                     temp.pickup.setHpr(0,rotangle - 90,0)
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
@@ -171,7 +172,6 @@ class World(DirectObject):
         
         if self.keyMap["w"]:
             ymov = -40
-            self.test.playAnimalSound()
         if self.keyMap["s"]:
             ymov = 40
         if self.keyMap["a"]:
@@ -180,8 +180,8 @@ class World(DirectObject):
             xmov = 40   
             
         if base.win.movePointer( 0, centerx, centery ):
-               xmov += ( x - centerx ) * 2
-               ymov += ( y - centery ) * 2
+               xmov += ( x - centerx ) * 1
+               ymov += ( y - centery ) * 1
 
         if self.env.getX() > self.xbounds:
             if xmov < 0:
@@ -204,9 +204,9 @@ class World(DirectObject):
         return Task.cont
             
     def loadModels(self):
-        self.env = loader.loadModel("Art/cylinder.egg")
+        self.env = loader.loadModel("Art/world.egg")
         self.env.reparentTo(render)
-        self.env.setScale(40)
+        self.env.setScale(1)
         self.env.setPos(0, 0, -55)
         
         #Shadow Code:

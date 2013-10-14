@@ -13,7 +13,7 @@ class Saucer(DirectObject):
         self.ship.reparentTo(render)
         self.ship.setScale(1)
         #self.ship.setH(180)
-        self.ship.setPos(0,0,0)
+        self.ship.setPos(0,0,15)
         
         #list of things currently abducting
         self.abductlist = []
