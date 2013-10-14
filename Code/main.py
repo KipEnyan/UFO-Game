@@ -5,8 +5,12 @@ from direct.showbase.DirectObject import DirectObject  #for event handling
 from direct.actor.Actor import Actor #for animated models
 from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
-import sys, math, random
+from direct.gui.OnscreenText import OnscreenText
+from direct.gui.OnscreenImage import OnscreenImage
 
+import sys, math, random
+import os
+from utilities import resource_path
 from saucer import*
 from pickupable import*
 
@@ -17,9 +21,17 @@ class World(DirectObject):
 
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -40, 80, 0, -15, 0)
+        camera.setPosHpr(0, -55, 65, 0, 50, 0)
+        camera.lookAt(self.saucer.ship)
+        camera.setP(camera.getP() - 5)
         self.loadModels()
-
+        self.loadHUD()
+        
+        gamepads = pyPad360()
+        gamepads.setupGamepads()
+        taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
+        self.gameControls360()
+        
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
         self.prevtime = 0
@@ -47,11 +59,43 @@ class World(DirectObject):
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
         self.xspeed = 0
         self.yspeed = 0
-        camera.lookAt(self.saucer.ship)
         #For recycler
-        self.xbounds = 92
+        self.xbounds = 160
         self.currentpickupable = 0
+        self.loadLevel()
         
+    def gameControls360(self):   
+        #Accept each message and do something based on the button
+        self.accept("C1_DPAD_UP", self.setKey, ["w", 1])
+        self.accept("C1_DPAD_DOWN", self.setKey,["s",1])
+        self.accept("C1_DPAD_LEFT", self.setKey, ["a", 1])
+        self.accept("C1_DPAD_RIGHT", self.setKey, ["d", 1])
+        self.accept("C1_DPAD_NONE", self.stop,["w",0,"s",0,"a",0,"d",0])
+        self.accept("C1_DPAD_UPLEFT", self.diagkeys, ["w",1,"a",1])
+        self.accept("C1_DPAD_UPRIGHT", self.diagkeys, ["w",1,"d",1])
+        self.accept("C1_DPAD_DOWNLEFT", self.diagkeys, ["s",1,"a",1])
+        self.accept("C1_DPAD_DOWNRIGHT", self.diagkeys, ["s",1,"d",1])
+        
+        self.accept("C1_LSTICK_HARDUP", self.setKey, ["w", 1])
+        self.accept("C1_LSTICK_SLIGHTUP", self.setKey, ["w", 0])
+        self.accept("C1_LSTICK_HARDDOWN", self.setKey,["s",1])
+        self.accept("C1_LSTICK_SLIGHTDOWN", self.setKey,["s",0])
+        self.accept("C1_LSTICK_HARDLEFT", self.setKey, ["a", 1])
+        self.accept("C1_LSTICK_SLIGHTLEFT", self.setKey, ["a", 0])
+        self.accept("C1_LSTICK_HARDRIGHT", self.setKey, ["d", 1])
+        self.accept("C1_LSTICK_SLIGHTRIGHT", self.setKey, ["d", 0])
+        
+        
+    def stop(self, key1, value1, key2, value2, key3, value3, key4, value4):
+        self.keyMap[key1] = value1
+        self.keyMap[key2] = value2
+        self.keyMap[key3] = value3
+        self.keyMap[key4] = value4
+    def diagkeys(self, key1, value1, key2, value2):
+        self.keyMap[key1] = value1
+        self.keyMap[key2] = value2    
+
+
 
     def setupWASD(self):
         self.accept("w", self.setKey, ["w", 1])
@@ -63,7 +107,50 @@ class World(DirectObject):
         self.accept("d", self.setKey, ["d", 1])
         self.accept("d-up", self.setKey, ["d", 0])
             
+    def loadLevel(self):
+        #self.map = open("C:\Users\Vanded3\Documents\ufo-game\Code\map.txt")
+        self.map = resource_path(os.path.join("Levels", "map.txt"))
+        #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
+        self.map = [line.rstrip() for line in self.map]
+        #self.terrainlist = []
+        tsize = 1
+                
+        self.pickupables = []
+        #self.animals = []
+        #self.inanimates = []
+        #self.hostiles = []
+        worldhalfwidth = 1
+        worldradius = 42
         
+        for i, row in enumerate(self.map):
+            for j, column in enumerate(row):
+                if column == "0":
+                    pass
+                if column == "C":
+                    temp = Pickupable()
+                    temp.setType("animal","cow")
+                    temp.pickup.setScale(10)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z = worldradius * math.sin(angle)
+                    
+                    temp.pickup.setPos(worldhalfwidth - (j * tsize), y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    
+                    self.pickupables.append(temp)
+        print len(self.pickupables)
+            
+      
+            
+             
+
+
+
+
+    
     def setKey(self, key, value):
         self.keyMap[key] = value
         
@@ -93,8 +180,8 @@ class World(DirectObject):
             xmov = 40   
             
         if base.win.movePointer( 0, centerx, centery ):
-               xmov += ( x - centerx ) * 2
-               ymov += ( y - centery ) * 2
+               xmov += ( x - centerx ) * 1
+               ymov += ( y - centery ) * 1
 
         if self.env.getX() > self.xbounds:
             if xmov < 0:
@@ -117,9 +204,9 @@ class World(DirectObject):
         return Task.cont
             
     def loadModels(self):
-        self.env = loader.loadModel("Art/cylinder.egg")
+        self.env = loader.loadModel("Art/world.egg")
         self.env.reparentTo(render)
-        self.env.setScale(40)
+        self.env.setScale(1)
         self.env.setPos(0, 0, -55)
         
         #Shadow Code:
@@ -140,11 +227,50 @@ class World(DirectObject):
         ts.setSort(1)
         ts.setMode(TextureStage.MDecal)
         self.env.projectTexture(ts, tex, proj)
+
+    def loadHUD(self):
+        #Draw image as outline for timer
+        timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
+       
+        #Draw num of animals left
+        num = str(200000)
+        AnimalsLeft = OnscreenText(text="Animals Left:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
+        self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(0,0,0,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
+       
+       #Draw time        
+        t = "0:00"
+        self.TimeText = OnscreenText(text=t,style=1, fg=(0,0,0,1),pos=(1,0.85), scale = .09, mayChange = 1, align = TextNode.ALeft)
+
+    def dCharstr(self,number):
+        theString = str(number)
+        if len(theString) != 2:
+            theString = '0' + theString
+        return theString
         
+    def textTask(self,task):
+        secondsTime = int(task.time)
+        minutesTime = int(secondsTime/60)
+        
+        self.seconds = secondsTime%60
+        self.minutes = minutesTime
+        
+        self.mytimer = str(self.minutes) + ":" + self.dCharstr(int(self.seconds))
+       #self.mytimer = str(self.seconds)
+
+        self.TimeText.setText(self.mytimer)
+        
+        
+        self.AnimalsLeftText.setText(str(self.animalsleft))
+        return Task.cont
+    
     def loadPickupables(self):
         #This function just loads a bunch of pickupables of random types.
         
         self.pickupables = []
+        self.animals = []
+        self.inanimates = []
+        self.hostiles = []
+        
         self.possibletypes = ['animal','inanimate','hostile']
         self.animaltypes = ['cow','pig','panda']
         self.inanimatetypes = ['house','car','tree']
@@ -161,8 +287,7 @@ class World(DirectObject):
             elif type == 'hostile':
                 type2 = random.choice(hostiletypes)
                 temp.setType(type,type2)
-                
-        self.pickupables.append(temp)
+            self.pickupables.append(temp)
         
     def spawnPickupable(self):  #Spawn the next pickupable in line from pickupable list
         self.pickupables[self.currentpickupable].alive = True
