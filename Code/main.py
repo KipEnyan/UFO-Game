@@ -207,6 +207,7 @@ class World(DirectObject):
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
         
         self.skybox.setX(self.skybox.getX() + elapsed * -.3 * self.xspeed)
+        self.skybox.setP(self.skybox.getP() + elapsed * -.3 * self.yspeed)
      
         self.saucer.ship.setR(self.xspeed * .2)
         self.saucer.ship.setP(self.yspeed * .2)
@@ -220,9 +221,9 @@ class World(DirectObject):
         self.env.setScale(1)
         self.env.setPos(0, 0, -55)
         
-        self.skybox = loader.loadModel("Art/skybox.egg")
+        self.skybox = loader.loadModel("Art/skytube.egg")
         self.skybox.reparentTo(render)
-        self.skybox.setScale(1)
+        self.skybox.setScale(2)
         self.skybox.setPos(0, 0, 0)
         self.skybox.setHpr(0,-60,0)
         
@@ -351,11 +352,11 @@ class World(DirectObject):
         
         #target colliders
         for p in self.pickupables:
-            cSphere = CollisionSphere((0,0,0), .5)
+            cSphere = CollisionSphere((0,0,0), 1)
             cNode = CollisionNode("pickupable")
             cNode.addSolid(cSphere)
             cNodePath = p.pickup.attachNewNode(cNode)
-            cNodePath.show()
+            #cNodePath.show()
     
     def beamCollide(self, cEntry):
         obj = cEntry.getIntoNodePath().getParent()

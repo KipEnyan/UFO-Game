@@ -62,6 +62,7 @@ class Pickupable(DirectObject):
         self.height = 0
         self.fallspeed = 0
         self.stunned = False
+        self.falling = False
         self.lr = False
         self.shakex = 0
         self.shakey = 0 
@@ -79,7 +80,7 @@ class Pickupable(DirectObject):
             self.weight = 2
         if self.type ==  'hostile':
             #self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
-            self.weight = 3           
+            self.weight = 2
 
         self.pickup.setScale(1)
         
@@ -93,7 +94,7 @@ class Pickupable(DirectObject):
         self.lr = False
         self.stuncount = 0
         self.myship = ship
-        self.height += .02 * self.weight
+        self.height += .02 * self.weight * ship.beamspeed
         self.pickup.setZ(-26 + self.height)
         
         if type == 'animal':
@@ -130,6 +131,11 @@ class Pickupable(DirectObject):
         self.pickup.remove()
         if self in self.myship.abductlist: 
             self.myship.abductlist.remove(self)
+            if self in self.myship.animals: 
+                self.myship.animals.remove(self)
+            if self in self.myship.inanimates: 
+                self.myship.inanimates.remove(self)
+            self.myship.findSpeed()
         self.alive = False
         
     def moveTask(self,task): #Responsible for falling when dropped, walking around(??)
@@ -142,16 +148,19 @@ class Pickupable(DirectObject):
             else:
                 self.pickup.setPos(self.shakex + random.uniform(-.1,.1),self.shakey + random.uniform(-.1,.1),self.shakez + random.uniform(-.1,.1))
             self.stuncount += 1
-            if self.stuncount > 60:
+            if self.stuncount > 30:
                 self.resetStun()
                 
         
         if self.abduct == False:
             if self.height > 0:
+                self.falling = True
                 self.fallspeed = self.fallspeed + ((.5 - self.fallspeed) * .05)
                 self.height -= self.fallspeed
-            elif self.height  < 0:
-                self.height  == 0
+            elif self.height  <= 0:
+                if self.falling:
+                    self.height  = 0
+                    self.explode()
             
         return task.cont
         
@@ -161,4 +170,5 @@ class Pickupable(DirectObject):
         self.stuncount = 0
         self.pickup.setPos(self.shakex,self.shakey,self.shakez)
 
-    
+    def explode(self):
+        self.die()
