@@ -108,9 +108,6 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
             
     def loadLevel(self):
-        self.map = open("C:\Users\Vanded3\Documents\ufo-game2\Code\Levels\level1.txt")
-        #self.map = resource_path(os.path.join("Levels", "map.txt"))
-        #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
         tsize = 1
