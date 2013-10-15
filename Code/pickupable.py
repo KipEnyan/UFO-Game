@@ -74,7 +74,7 @@ class Pickupable(DirectObject):
             self.weight = 2
         if self.type ==  'hostile':
             self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
-            self.weight = 3           
+            self.weight = 2           
 
         self.pickup.setScale(1)
         
