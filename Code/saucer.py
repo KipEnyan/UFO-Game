@@ -32,20 +32,35 @@ class Saucer(DirectObject):
         
         #list of things currently abducting
         self.abductlist = []
+        self.animals = []
+        self.inanimates = []
         taskMgr.add(self.abductTask, "abductTask")
-        self.stuntime = 50
+        self.stuntime = 20
+        self.stunbase = 20
         self.updown = False
+        self.beamspeed = 1
+        self.basebeamspeed = 1
 
     def pickUp(self,object):   #Pick up another pickupable 
         if object.stuncount < self.stuntime:
             object.stunned = True
         else:
-            if (len(self.abductlist) < 5):
+            if (len(self.abductlist) < 15):
+                if object.type == 'inanimate':
+                    self.inanimates.append(object)
+                elif object.type == 'hostile':
+                    self.inanimates.append(object)
+                elif object.type == 'animal':
+                    self.animals.append(object)
+                    
+                self.findSpeed()
+                
                 object.resetStun()
                 object.abduct = True
                 self.abductlist.append(object)
                 object.playAnimalSound()
                 object.pickup.reparentTo(self.dummy2)
+                object.pickup.setHpr(0,0,0)
                 object.pickup.setPos(0,0,-26)
             else:
                 print ("Pickup list full.")
@@ -68,4 +83,55 @@ class Saucer(DirectObject):
             obj.rise(self)
             
         return Task.cont
+
+    def cowbig(self,me):
+        if me > self.panda and me > self.pigs and me > self.sheep:
+            return True
+    def pigbig(self,me):
+        if me > self.cows and me > self.sheep and me > self.panda:
+            return True
+    def sheepbig(self,me):
+        if me > self.cows and me > self.pigs and me > self.panda:
+            return True
+    def pandabig(self,me):
+        if me > self.cows and me > self.pigs and me > self.sheep:
+            return True            
+
+
+    def biggest(self):
+        if self.cowbig(self.cows):
+            return self.cows - ((self.pigs + self.sheep + self.panda) / 3)
+        if self.pigbig(self.pigs):
+            return self.pigs - ((self.cows + self.sheep + self.panda) / 3)
+        if self.sheepbig(self.sheep):
+            return self.sheep - ((self.pigs + self.cows + self.panda) / 3)
+        if self.pandabig(self.panda):
+            return self.panda - ((self.pigs + self.sheep + self.cows) / 3)
+          
+        return 0
+    def findSpeed(self):
+        self.cows = 0
+        self.pigs = 0
+        self.sheep = 0
+        self.panda = 0
+        for animal in self.animals:
+            if animal.type2 == 'cow':
+                self.cows += 1
+            if animal.type2 == 'pig':
+                self.pigs += 1
+            if animal.type2 == 'sheep':
+                self.sheep += 1
+            if animal.type2 == 'panda':
+                self.panda += 1
         
+        speedadd = self.biggest() * 2
+        
+        speeddeduct = len(self.inanimates)
+        self.beamspeed = self.basebeamspeed - speeddeduct + speedadd
+        self.stuntime = self.stunbase - (self.beamspeed * 1.5)
+        
+        if self.stuntime < 2:
+            self.stuntime = 2
+        
+        if self.beamspeed < .6:
+            self.beamspeed = .6
