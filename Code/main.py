@@ -66,7 +66,7 @@ class World(DirectObject):
         self.xspeed = 0
         self.yspeed = 0
         #For recycler
-        self.xbounds = 160
+        self.xbounds = 130
         self.currentpickupable = 0
         self.loadLevel()
         
@@ -130,33 +130,97 @@ class World(DirectObject):
         
         for i, row in enumerate(self.map):
             for j, column in enumerate(row):
-                if column == "0":
+                if column == "-":
                     pass
                 if column == "C":
                     temp = Pickupable()
+                    print("in cow")
                     temp.setType("animal","cow")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
                     z = worldradius * math.sin(angle)
-                    
-                    temp.pickup.setPos(worldhalfwidth - (j * tsize), y, z)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
-                    
                     self.pickupables.append(temp)
-        print len(self.pickupables)
+                    print (len(self.pickupables)) 
+                if column == "S":
+                    temp = Pickupable()
+                    temp.setType("animal", "sheep")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in S")
+                if column == "P":
+                    temp = Pickupable()
+                    temp.setType("animal", "panda")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in P")
+                if column == "B":
+                    temp = Pickupable()
+                    temp.setType("animal", "pig")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in B")
+                if column == "M":    
+                    temp = Pickupable()
+                    temp.setType("hostile", "missile")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in M")
+                if column == "N":
+                    temp = Pickupable()
+                    temp.setType("inanimate", "crate")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)    
+                    self.pickupables.append(temp)
+                    print("in N")
+        print len(self.pickupables)    
             
       
-            
-             
-
-
-
-
-    
     def setKey(self, key, value):
         self.keyMap[key] = value
         
@@ -280,38 +344,7 @@ class World(DirectObject):
         self.AnimalsLeftText.setText(str(self.animalsleft))
         return Task.cont
     
-    def loadPickupables(self):
-        #This function just loads a bunch of pickupables of random types.
-        
-        self.pickupables = []
-        self.animals = []
-        self.inanimates = []
-        self.hostiles = []
-        
-        self.possibletypes = ['animal','inanimate','hostile']
-        self.animaltypes = ['cow','pig','panda']
-        self.inanimatetypes = ['house','car','tree']
-        self.hostiletypes = ['tank','helicopter','launcher']
-        for x in range(30):
-            temp = Pickupable()
-            type = random.choice(possibletypes)
-            if type == 'animal':
-                type2 = random.choice(animaltypes)
-                temp.setType(type,type2)
-            elif type == 'inanimate':
-                type2 = random.choice(inanimatetypes)
-                temp.setType(type,type2)
-            elif type == 'hostile':
-                type2 = random.choice(hostiletypes)
-                temp.setType(type,type2)
-            self.pickupables.append(temp)
-        
-    def spawnPickupable(self):  #Spawn the next pickupable in line from pickupable list
-        self.pickupables[self.currentpickupable].alive = True
-        self.currentpickupable += 1
-        if self.currentpickupable > (len(self.pickupables) - 1):
-            self.currentpickupable = 0
-        
+
     def setupLights(self):
         """loads initial lighting"""
         self.dirLight = DirectionalLight("dirLight")

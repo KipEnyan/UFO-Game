@@ -21,7 +21,7 @@ class Pickupable(DirectObject):
         self.type2 = 'cow'
         #Linked to how fast it is sucked up
         self.weight = 1
-        self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
+        #self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
         #self.pickup.setScale(1)
     
         #code to add sounds
@@ -72,11 +72,12 @@ class Pickupable(DirectObject):
         
     def setType(self,type,type2):
         self.type = type
+        self.type2 = type2
         if self.type == 'animal':
-            #self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
+            self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
             self.weight = 1
         if self.type ==  'inanimate':
-            #self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
+            self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
             self.weight = 2
 
         self.pickup.setScale(1)
@@ -109,7 +110,9 @@ class Pickupable(DirectObject):
         if self.type2 == 'cow':
             randSound = random.choice(self.cowsounds)
             randSound.play()
-            
+        if self.type2 == 'sheep':
+            randSound = random.choice(self.sheepsounds)
+            randSound.play()    
         if self.type2 == 'panda':
             randSound = random.choice(self.pandasounds)
             randSound.play()
