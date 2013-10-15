@@ -117,9 +117,6 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
             
     def loadLevel(self):
-        #self.map = open("C:\Users\Vanded3\Documents\ufo-game\Code\map.txt")
-        #self.map = resource_path(os.path.join("Levels", "map.txt"))
-        self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
         tsize = 1
@@ -128,7 +125,7 @@ class World(DirectObject):
         #self.animals = []
         #self.inanimates = []
         #self.hostiles = []
-        worldhalfwidth = 1
+        worldhalfwidth = 130
         worldradius = 43
         
         for i, row in enumerate(self.map):
