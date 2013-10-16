@@ -174,4 +174,3 @@ class Pickupable(DirectObject):
         self.pickup.setPos(self.shakex,self.shakey,self.shakez)
 
     def explode(self):
-        self.die()
