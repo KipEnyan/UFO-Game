@@ -23,7 +23,7 @@ class World(DirectObject):
         self.accept("escape", sys.exit) 
         self.accept("enter", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
-        
+        self.tractorbeamsound = base.loader.loadSfx("Sounds/tractorbeam.wav")
         Lvl = 1
         self.Lvl = Lvl
         
@@ -420,6 +420,9 @@ class World(DirectObject):
                 #camera.lookAt(object.pickup)
 
         if self.keyMap["k"]:
+            if self.tractorbeamsound.status() != AudioSound.PLAYING:
+                self.tractorbeamsound.play()
+        
             self.saucer.beamon = True
             
             if self.xspeed > 30:
@@ -458,6 +461,8 @@ class World(DirectObject):
                 accel = .035
         else:
             self.saucer.beamon = False
+            if self.tractorbeamsound.status() == AudioSound.PLAYING:
+                self.tractorbeamsound.stop()
             
             if self.keyMap["w"]:
                 dir = 270

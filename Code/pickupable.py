@@ -16,6 +16,7 @@ class Pickupable(DirectObject):
     def __init__(self, type1, type2):
         self.type1 = type1
         self.type2 = type2
+        self.weight = 1
         self.sounds = []
 
         if self.type1 == "animal":
@@ -24,15 +25,18 @@ class Pickupable(DirectObject):
                 self.sounds.append(sound)
 
             self.weight = 1
+            self.suckSound = base.loader.loadSfx("Sounds/suck.wav")
+            
 
         self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
         self.pickup.setScale(1)  
-        
+        self.splatSound = base.loader.loadSfx("Sounds/splat.wav")
+        self.crunchSound = base.loader.loadSfx("Sounds/crunch.wav")
         #Being abducted?
         self.abduct = False 
         #When pickupable height reaches this level, it is abducted.
         self.abductheight = 35
-        
+       
         #Height off of ground
         self.height = 0
         self.fallspeed = 0
@@ -106,8 +110,12 @@ class Pickupable(DirectObject):
     def playAnimalSound(self):
         randSound = random.choice(self.sounds)
         randSound.play()
-             
+        
+    def playCrunchSound(self):
+        self.crunchSound.play()
+        
     def abducted(self):
+        self.suckSound.play()
         self.die()
     
     def die(self):      #Set self to dead, remove from render node. For recycler.
@@ -176,7 +184,8 @@ class Pickupable(DirectObject):
         else:
             self.particle = self.explodep
         self.particle.start(parent = self.pickup, renderParent = self.pickup)
-        
+        self.splatSound.play()
+        #self.myship.isSplat = True
         self.pickup.setAlphaScale(0) 
         self.pickup.setTransparency(TransparencyAttrib.MAlpha)
         self.willdie = True
