@@ -212,4 +212,3 @@ class Pickupable(DirectObject):
         self.lr = False
         self.stuncount = 0
         self.pickup.setPos(self.shakex,self.shakey,self.shakez)
-      
