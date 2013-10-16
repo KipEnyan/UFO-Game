@@ -14,6 +14,7 @@ class Saucer(DirectObject):
     
         self.ship = loader.loadModel("Art\ufo.egg")
         self.beam = loader.loadModel("Art\eam.egg")
+        self.health = 100
       
         #Dummy is used to position the tractor beam collisionsphere
         self.dummy = NodePath('dummy')
@@ -48,7 +49,9 @@ class Saucer(DirectObject):
         self.stunbase = 30
         self.updown = False
         self.beamspeed = 1
-        self.basebeamspeed = 1
+        self.basebeamspeed = 2
+        
+        self.collected = 0
         
         self.beamon = True
         
@@ -169,11 +172,13 @@ class Saucer(DirectObject):
             self.stuntime = 2
         
         #Minimum beam speed
-        if self.beamspeed < 1:
-            self.beamspeed = 1
+        if self.beamspeed < 2:
+            self.beamspeed = 2
             
     def abductAnimal(self):
         self.pcount = self.particletime
+        #self.abductp.start(parent = self.ship, renderParent = self.ship)
+        self.collected += 1
 
         
     def particleTask(self,task):
@@ -181,7 +186,7 @@ class Saucer(DirectObject):
             self.pcount -= 1
         elif self.pcount == 0:
             self.pcount = -1
-            #self.abductp.reset()
+            self.abductp.reset()
             self.abductp.disable()
             
         return task.cont

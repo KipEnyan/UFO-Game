@@ -21,9 +21,15 @@ del base
 class World(DirectObject):
     def __init__(self):
 
+        base.disableMouse()
         self.accept("escape", sys.exit) 
         self.accept("enter", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
+        self.music = base.loader.loadMusic("Sounds/GameMusic2.wav")
+        self.music.setLoop(True)
+        self.music.setVolume(.33
+            )
+        self.music.play()
         self.tractorbeamsound = base.loader.loadSfx("Sounds/tractorbeam.wav")
         Lvl = 1
         self.Lvl = Lvl
@@ -40,7 +46,8 @@ class World(DirectObject):
         self.title.setScale(1)
         self.title.setPos(0, 0, -55)
         
-        self.text1 = OnscreenText(text="Press Enter to Start",style=1, fg=(0.8,0,0.1,1),pos=(0, -0.88), scale = .2,mayChange = 1,align=TextNode.ACenter)
+        self.titleScreen = OnscreenImage(image = 'Art/images/title_screen.png')
+        #self.text1 = OnscreenText(text="Press Enter to Start",style=1, fg=(0.8,0,0.1,1),pos=(0, 0.77), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.inGame = False
         #print self.text1
         
@@ -51,8 +58,9 @@ class World(DirectObject):
             self.inGame = True
             self.title.removeNode()          
             del self.title
-            self.text1.destroy()
-            del self.text1
+            self.titleScreen.destroy()
+            #self.text1.destroy()
+            #del self.text1
             
             self.startGame()
  
@@ -60,7 +68,6 @@ class World(DirectObject):
         #if self.inGame == True:
         
         self.saucer = Saucer()
-        base.disableMouse()
         camera.setPosHpr(0, -40, 73, 0, 0, 0)
         camera.lookAt(self.saucer.ship)
         camera.setP(camera.getP() -8)
@@ -103,12 +110,12 @@ class World(DirectObject):
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
         taskMgr.add(self.missileSeek, "missileSeekTask")
             
-        self.animalsleft = 2
+        self.animalsleft = 0
         self.missiles = []
             
         taskMgr.add(self.textTask, "textTask")
 
-
+        self.saucer.ship.setColorScale(1,1,1,1)
         self.missileSound = base.loader.loadSfx("Sounds/tankshot.wav")
         self.missileHitSound = base.loader.loadSfx("Sounds/missile.wav")
         self.xspeed = 0
@@ -141,6 +148,8 @@ class World(DirectObject):
         taskMgr.remove('textTask')
         taskMgr.remove('abductTask')
         taskMgr.remove('moveTask')
+        taskMgr.remove('missileSeekTask')
+        taskMgr.remove('ParticleTaskTask')
         
         self.env.removeNode()          
         del self.env
@@ -148,8 +157,8 @@ class World(DirectObject):
         del self.saucer.ship
         self.saucer.beam.removeNode()         
         del self.saucer.beam
-        self.timeroutline.removeNode()
-        del self.timeroutline
+        #self.timeroutline.removeNode()
+        #del self.timeroutline
         self.TimeText.destroy()
         del self.TimeText
         
@@ -169,7 +178,7 @@ class World(DirectObject):
         taskMgr.remove('textTask')
         taskMgr.remove('abductTask')
         taskMgr.remove('moveTask')
-        
+        taskMgr.remove('missileSeekTask')
         
         self.env.removeNode()          
         del self.env
@@ -186,12 +195,12 @@ class World(DirectObject):
             self.pickupables[i].pickup.removeNode()
             del self.pickupables[i].pickup
         
-        if self.medal == "Gold":
-            self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
-        elif self.medal == "Silver":
-            self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
-        elif self.medal == "Bronze":
-            self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
+        #if self.medal == "Gold":
+        #    self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
+        #elif self.medal == "Silver":
+        #    self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
+        #elif self.medal == "Bronze":
+        #    self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
         
         if self.Lvl < 4:
             self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
@@ -199,8 +208,10 @@ class World(DirectObject):
             self.Lvl += 1
             self.accept("enter", self.nextLevel)
             self.accept("C1_START_DOWN", self.nextLevel)
+            
         else:
-            self.texte = OnscreenText(text="You Finished the Game!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
+            self.creditsScreen = OnscreenImage(image = 'Art/images/credits_screen.png')
+            #self.texte = OnscreenText(text="You Finished the Game!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
     def nextLevel(self):
         self.skybox.removeNode()          
         del self.skybox
@@ -210,18 +221,22 @@ class World(DirectObject):
         del self.textd
         
         if self.levelComplete == True:
-            self.timeroutline.removeNode()
-            del self.timeroutline
+            #self.timeroutline.removeNode()
+            #del self.timeroutline
             self.TimeText.destroy()
             del self.TimeText
-            self.medalImage.removeNode()          
-            del self.medalImage
+            #self.medalImage.removeNode()          
+            #del self.medalImage
         if self.levelComplete == False:
             self.AnimalsLeft.destroy()
             del self.AnimalsLeft
             self.AnimalsLeftText.destroy()
             del self.AnimalsLeftText   
+        for p in self.pickupables:
+            p.particle.disable()
+        self.saucer.abductp.disable()
 
+        
         self.startGame()
         
     def gameControls360(self):   
@@ -281,6 +296,8 @@ class World(DirectObject):
         #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
         self.map = open (self.mydir + "\Levels\level" + str(self.Lvl) + ".txt")
         self.map = [line.rstrip() for line in self.map]
+        self.tex = loader.loadTexture("\Art\images\world" + str(self.Lvl) + "_texture.png")
+        self.env.setTexture(self.tex)
         #self.terrainlist = []
         tsize = 4
                 
@@ -297,6 +314,7 @@ class World(DirectObject):
                     pass
                 if column == "C":
                     temp = Pickupable("animal","cow")
+                    temp.pickup.reparentTo(self.env)
                     #print("in cow")
                     temp.pickup.setScale(1)
                     angle = i * .1
@@ -305,8 +323,9 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
-                    temp.pickup.reparentTo(self.env)
+                    #temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
                    #print (len(self.pickupables)) 
                 if column == "S":
@@ -318,6 +337,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -331,6 +351,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -344,6 +365,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -357,6 +379,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -370,6 +393,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
@@ -383,6 +407,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
@@ -396,6 +421,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
@@ -530,7 +556,7 @@ class World(DirectObject):
         return Task.cont
             
     def loadModels(self):
-        self.env = loader.loadModel("Art/world.egg")
+        self.env = loader.loadModel("Art/world1.egg")
         self.env.reparentTo(render)
         self.env.setScale(1)
         self.env.setPos(0, 0, -55)
@@ -564,16 +590,17 @@ class World(DirectObject):
 
     def loadHUD(self):
         #Draw image as outline for timer
-        self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
-       
+        #self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
+        #self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (-.98, 0, .88), scale = (.38,.50,.12))
+
         #Draw num of animals left
         num = str(200000)
-        self.AnimalsLeft = OnscreenText(text="Animals Left:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
-        self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(0,0,0,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
+        self.AnimalsLeft = OnscreenText(text="Animals Collected:",style=1, fg=(1,1,1,1),pos=(-1,.9), scale = .07,mayChange = 1)
+        self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(1,1,1,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
        
        #Draw time        
         t = "0:00"
-        self.TimeText = OnscreenText(text=t,style=1, fg=(0,0,0,1),pos=(1,0.85), scale = .09, mayChange = 1, align = TextNode.ALeft)
+        self.TimeText = OnscreenText(text=t,style=1, fg=(1,1,1,1),pos=(1,0.85), scale = .09, mayChange = 1, align = TextNode.ALeft)
 
     def dCharstr(self,number):
         theString = str(number)
@@ -595,14 +622,17 @@ class World(DirectObject):
         
         medal = "No Medal"
         self.medal = medal
-        if task.time <= 5:
+        if task.time <= 35:
             self.medal = "Gold"
-        elif task.time > 5 and task.time <=10:
+        elif task.time > 35 and task.time <=50:
             self.medal = "Silver"
-        elif task.time > 10:
+        elif task.time > 50:
             self.medal = "Bronze"
         
-        self.AnimalsLeftText.setText(str(self.animalsleft))
+        self.AnimalsLeftText.setText(str(self.saucer.collected))
+        if self.saucer.collected > 30:
+            self.winGame()
+        
         return Task.cont
     
 
@@ -690,6 +720,11 @@ class World(DirectObject):
                 self.missileHitSound.play()
                 i.model.removeNode()
                 self.missiles.remove(i)
+                self.saucer.health -= 20
+                if self.saucer.health <=0:
+                    self.loseGame()
+                elif self.saucer.health <= 50:
+                    self.saucer.ship.setColorScale(1,.5,.5,1)
                 return
         
 w = World()
