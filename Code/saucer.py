@@ -51,6 +51,8 @@ class Saucer(DirectObject):
         self.beamspeed = 1
         self.basebeamspeed = 1
         
+        self.collected = 0
+        
         self.beamon = True
         
         taskMgr.add(self.particleTask, "shipparticleTask")
@@ -175,6 +177,8 @@ class Saucer(DirectObject):
             
     def abductAnimal(self):
         self.pcount = self.particletime
+        self.abductp.start(parent = self.ship, renderParent = self.ship)
+        self.collected += 1
 
         
     def particleTask(self,task):

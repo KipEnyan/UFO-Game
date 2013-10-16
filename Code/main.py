@@ -103,7 +103,7 @@ class World(DirectObject):
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
         taskMgr.add(self.missileSeek, "missileSeekTask")
             
-        self.animalsleft = 2
+        self.animalsleft = 0
         self.missiles = []
             
         taskMgr.add(self.textTask, "textTask")
@@ -199,6 +199,7 @@ class World(DirectObject):
             self.Lvl += 1
             self.accept("enter", self.nextLevel)
             self.accept("C1_START_DOWN", self.nextLevel)
+            
         else:
             self.texte = OnscreenText(text="You Finished the Game!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
     def nextLevel(self):
@@ -221,7 +222,11 @@ class World(DirectObject):
             del self.AnimalsLeft
             self.AnimalsLeftText.destroy()
             del self.AnimalsLeftText   
+        for p in self.pickupables:
+            p.particle.disable()
+        self.saucer.abductp.disable()
 
+        
         self.startGame()
         
     def gameControls360(self):   
@@ -574,10 +579,11 @@ class World(DirectObject):
     def loadHUD(self):
         #Draw image as outline for timer
         self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
-       
+        self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (-.98, 0, .88), scale = (.38,.50,.12))
+
         #Draw num of animals left
         num = str(200000)
-        self.AnimalsLeft = OnscreenText(text="Animals Left:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
+        self.AnimalsLeft = OnscreenText(text="Animals Collected:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
         self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(0,0,0,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
        
        #Draw time        
@@ -611,7 +617,10 @@ class World(DirectObject):
         elif task.time > 10:
             self.medal = "Bronze"
         
-        self.AnimalsLeftText.setText(str(self.animalsleft))
+        self.AnimalsLeftText.setText(str(self.saucer.collected))
+        if self.saucer.collected > 30:
+            self.winGame()
+        
         return Task.cont
     
 
