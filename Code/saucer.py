@@ -93,7 +93,7 @@ class Saucer(DirectObject):
             object.abduct = False
             object.pickup.wrtReparentTo(env)
             #object.pickup.setPos(self.dummy2.getX(),self.dummy2.getY(),self.dummy2.getZ())
-        self.abductlist = []
+        self.abductlist[:] = []
  
     def lightTask(self,task):
         if not self.beamon:

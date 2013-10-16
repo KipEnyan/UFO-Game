@@ -27,7 +27,7 @@ class Pickupable(DirectObject):
             self.suckSound = base.loader.loadSfx("Sounds/suck.wav")
             self.splatSound = base.loader.loadSfx("Sounds/splat.wav")
 
-        elif self.type1 == "inanimate":
+        else:
             sound = base.loader.loadSfx("Sounds/crunch.wav")
             self.pickupSounds.append(sound)
             self.splatSound = base.loader.loadSfx("Sounds/explosion.wav")
@@ -36,7 +36,6 @@ class Pickupable(DirectObject):
         self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
         self.pickup.setScale(1)  
         
-        self.crunchSound = base.loader.loadSfx("Sounds/crunch.wav")
         #Being abducted?
         self.abduct = False 
         #When pickupable height reaches this level, it is abducted.
