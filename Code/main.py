@@ -34,7 +34,7 @@ class World(DirectObject):
         self.gameControls360()
         
         self.setupLights()
-        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
+        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0,"k":0}
         self.prevtime = 0
         self.accept("escape", sys.exit)
         
@@ -51,6 +51,8 @@ class World(DirectObject):
         self.accept("d", self.setKey, ["d", 1])
         self.accept("d-up", self.setKey, ["d", 0])
         
+        self.accept("k", self.setKey, ["k", 1])
+        self.accept("k-up", self.setKey, ["k", 0])       
 
         self.mydir = os.path.abspath(sys.path[0])
         self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
@@ -247,15 +249,70 @@ class World(DirectObject):
 
         xmov = 0
         ymov = 0
-        
-        if self.keyMap["w"]:
-            ymov = -40
-        if self.keyMap["s"]:
-            ymov = 40
-        if self.keyMap["a"]:
-            xmov = -40
-        if self.keyMap["d"]:
-            xmov = 40   
+        accel = 0
+        dir = -1
+        if self.keyMap["k"]:
+            self.saucer.beamon = True
+            
+            if self.xspeed > 30:
+                self.xspeed = 30
+            elif self.xspeed < -30:
+                self.xspeed = -30
+            if self.yspeed > 30:
+                self.yspeed = 30
+            elif self.yspeed < -30:
+                self.yspeed = -30
+            
+            if self.keyMap["w"]:
+                dir = 270
+            if self.keyMap["s"]:
+                dir = 90
+            if self.keyMap["a"]:
+                dir = 180
+            if self.keyMap["d"]:
+                dir = 0
+            if self.keyMap["w"] and self.keyMap["d"]:
+                dir = 315
+            if self.keyMap["w"] and self.keyMap["a"]:
+                dir = 225
+            if self.keyMap["s"] and self.keyMap["a"]:
+                dir = 135
+            if self.keyMap["s"] and self.keyMap["d"]:
+                dir = 45
+            
+            if dir != -1:
+                xmov = 26 * math.cos(math.radians(dir))
+                ymov = 26 * math.sin(math.radians(dir))
+            
+            if xmov == 0 and ymov == 0:   
+                accel = .1
+            else:   
+                accel = .035
+        else:
+            self.saucer.beamon = False
+            
+            if self.keyMap["w"]:
+                dir = 270
+            if self.keyMap["s"]:
+                dir = 90
+            if self.keyMap["a"]:
+                dir = 180
+            if self.keyMap["d"]:
+                dir = 0
+            if self.keyMap["w"] and self.keyMap["d"]:
+                dir = 315
+            if self.keyMap["w"] and self.keyMap["a"]:
+                dir = 225
+            if self.keyMap["s"] and self.keyMap["a"]:
+                dir = 135
+            if self.keyMap["s"] and self.keyMap["d"]:
+                dir = 45
+            
+            if dir != -1:
+                xmov = 40 * math.cos(math.radians(dir))
+                ymov = 40 * math.sin(math.radians(dir))
+            accel = .07
+
             
         if base.win.movePointer( 0, centerx, centery ):
                xmov += ( x - centerx ) * 1
@@ -268,15 +325,16 @@ class World(DirectObject):
             if xmov > 0:
                 xmov = 0
                
-        self.xspeed = self.xspeed + ( (xmov - self.xspeed) * .1)
-        self.yspeed = self.yspeed + ( (ymov - self.yspeed) * .1)
+        self.xspeed = self.xspeed + ( (xmov - self.xspeed) * accel)
+        self.yspeed = self.yspeed + ( (ymov - self.yspeed) * accel)
           
+        
           
         self.env.setX(self.env.getX() + elapsed * -self.xspeed)
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
         
         self.skybox.setX(self.skybox.getX() + elapsed * -.3 * self.xspeed)
-        self.skybox.setP(self.skybox.getP() + elapsed * -.3 * self.yspeed)
+        self.skybox.setP(self.skybox.getP() + elapsed * -.1 * self.yspeed)
      
         self.saucer.ship.setR(self.xspeed * .2)
         self.saucer.ship.setP(self.yspeed * .2)
@@ -397,12 +455,13 @@ class World(DirectObject):
             #cNodePath.show()
     
     def beamCollide(self, cEntry):
-        obj = cEntry.getIntoNodePath().getParent()
-        
-        for x in self.pickupables:
-            if (x.pickup == obj):
-                self.saucer.pickUp(x)
-                return
+        if self.saucer.beamon:
+            obj = cEntry.getIntoNodePath().getParent()
+            
+            for x in self.pickupables:
+                if (x.pickup == obj):
+                    self.saucer.pickUp(x)
+                    return
 
         
 w = World()
