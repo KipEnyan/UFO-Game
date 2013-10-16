@@ -64,7 +64,6 @@ class World(DirectObject):
         camera.setPosHpr(0, -55, 65, 0, 50, 0)
         camera.lookAt(self.saucer.ship)
         camera.setP(camera.getP() -8)
-
         self.loadModels()
         self.loadHUD()
             
