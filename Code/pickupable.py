@@ -101,6 +101,7 @@ class Pickupable(DirectObject):
         self.stuncount = 0
         self.myship = ship
         self.pickup.setZ(-36 + self.height)
+        self.fallspeed = 0
 
 
         if self.type1 == 'animal':
@@ -162,7 +163,7 @@ class Pickupable(DirectObject):
                 else:
                     self.pickup.setPos(self.shakex + random.uniform(-.1,.1),self.shakey + random.uniform(-.1,.1),self.shakez + random.uniform(-.1,.1))
                 self.stuncount += 1
-                if self.stuncount > 30:
+                if self.stuncount > 35:
                     self.resetStun()
                     
             
