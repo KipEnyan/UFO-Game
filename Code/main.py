@@ -10,6 +10,7 @@ from direct.gui.OnscreenImage import OnscreenImage
 
 import sys, math, random
 import os
+from panda3d.core import Filename
 from utilities import resource_path
 from saucer import*
 from pickupable import*
@@ -51,6 +52,10 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
         
 
+        self.mydir = os.path.abspath(sys.path[0])
+        self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
+        self.mydir = Filename(self.mydir)
+        self.mydir = self.mydir.toOsSpecific()
 
         
         
@@ -117,9 +122,9 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
             
     def loadLevel(self):
-        self.map = open("C:\Users\Vanded3\Documents\ufo-game2\Code\Levels\level1.txt")
-        #self.map = resource_path(os.path.join("Levels", "map.txt"))
+        #self.map = open("C:\Users\Vanded3\Documents\ufo-game2\Code\Levels\level1.txt")
         #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
+        self.map = open (self.mydir + "\Levels\level1.txt")
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
         tsize = 1
@@ -166,7 +171,7 @@ class World(DirectObject):
                     print("in S")
                 if column == "P":
                     temp = Pickupable()
-                    temp.setType("animal", "panda")
+                    temp.setType("animal", "cow")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -208,7 +213,7 @@ class World(DirectObject):
                     print("in M")
                 if column == "N":
                     temp = Pickupable()
-                    temp.setType("inanimate", "crate")
+                    temp.setType("inanimate", "tractor")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
