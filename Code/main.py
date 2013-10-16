@@ -281,6 +281,8 @@ class World(DirectObject):
         #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
         self.map = open (self.mydir + "\Levels\level" + str(self.Lvl) + ".txt")
         self.map = [line.rstrip() for line in self.map]
+        self.tex = loader.loadTexture("\Art\images\world" + str(self.Lvl) + "_texture.png")
+        self.env.setTexture(self.tex)
         #self.terrainlist = []
         tsize = 4
                 
@@ -539,7 +541,7 @@ class World(DirectObject):
         return Task.cont
             
     def loadModels(self):
-        self.env = loader.loadModel("Art/world.egg")
+        self.env = loader.loadModel("Art/world1.egg")
         self.env.reparentTo(render)
         self.env.setScale(1)
         self.env.setPos(0, 0, -55)
