@@ -25,7 +25,7 @@ class World(DirectObject):
         self.accept("enter", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
         self.tractorbeamsound = base.loader.loadSfx("Sounds/tractorbeam.wav")
-        Lvl = 1
+        Lvl = 3
         self.Lvl = Lvl
         
         gamepads = pyPad360()
@@ -108,17 +108,25 @@ class World(DirectObject):
             
         taskMgr.add(self.textTask, "textTask")
 
-     
+
+        self.missileSound = base.loader.loadSfx("Sounds/tankshot.wav")
+        self.missileHitSound = base.loader.loadSfx("Sounds/missile.wav")
         self.xspeed = 0
         self.yspeed = 0
         #For recycler
         self.xbounds = 130
         self.currentpickupable = 0
         self.loadLevel()
-            
+        
+        base.cTrav = CollisionTraverser()
+        #set the collision handler to send event messages on collision
+        self.cHandler = CollisionHandlerEvent()
+        # %in is substituted with the name of the into object
+        self.cHandler.setInPattern("%fn-%in")
         self.setupCollisions()
         self.accept("beam-pickupable", self.beamCollide)
-        self.accept("ufo-tankdetect", self.tankShoot)
+        self.accept("ship-tankdetect", self.tankShoot)
+        self.accept("missile-ship", self.missileHit)
 
        #print "Level " + str(self.Lvl) 
         self.accept("space", self.loseGame)#Goes to Level Failed screen. For testing purposes
@@ -615,18 +623,12 @@ class World(DirectObject):
         render.setLight(self.ambientLightNP)
         
     def setupCollisions(self):
-        #make a collision traverser
-        base.cTrav = CollisionTraverser()
-        #set the collision handler to send event messages on collision
-        self.cHandler = CollisionHandlerEvent()
-        # %in is substituted with the name of the into object
-        self.cHandler.setInPattern("%fn-%in")
 
         cSphere = CollisionSphere((0,0,0), 2)
         cNode = CollisionNode("ship")
         cNode.addSolid(cSphere)
-        cNode.setIntoCollideMask(BitMask32.allOff())
         cNodePath = self.saucer.ship.attachNewNode(cNode)
+        base.cTrav.addCollider(cNodePath, self.cHandler)
 
         
         #saucer collider
@@ -648,11 +650,11 @@ class World(DirectObject):
             cNodePath = p.pickup.attachNewNode(cNode)
 
             if p.type2 == "tank":
-                cSphere = CollisionSphere((0,0,0), 25)
+                cSphere = CollisionSphere((0,0,0), 45)
                 cNode = CollisionNode("tankdetect")
                 cNode.addSolid(cSphere)
                 cNodePath = p.pickup.attachNewNode(cNode)
-            #cNodePath.show()
+                #cNodePath.show()
     
     def beamCollide(self, cEntry):
         if self.saucer.beamon:
@@ -665,13 +667,30 @@ class World(DirectObject):
 
     def tankShoot(self, cEntry):
         tank = cEntry.getIntoNodePath()
-        newMissile = Missile(tank.getX(), tank.getY(), tank.getZ())
-        self.missiles.append[newMissile]
+        newMissile = Missile()
+        newMissile.model.reparentTo(tank.getParent())
+        cSphere = CollisionSphere((0,0,0), 2)
+        cNode = CollisionNode("missile")
+        cNode.addSolid(cSphere)
+        cNodePath = newMissile.model.attachNewNode(cNode)
+        base.cTrav.addCollider(cNodePath, self.cHandler)
+        self.missiles.append(newMissile)
+        self.missileSound.play()
 
     def missileSeek(self, task):
         for i in self.missiles:
             i.seek(self.saucer.ship)
 
+        return Task.cont
+
+    def missileHit(self, cEntry):
+        aMissile = cEntry.getFromNodePath().getParent()
+        for i in self.missiles:
+            if i.model == aMissile:
+                self.missileHitSound.play()
+                i.model.removeNode()
+                self.missiles.remove(i)
+                return
         
 w = World()
 run()
