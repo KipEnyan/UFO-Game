@@ -352,7 +352,6 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    self.pickupables.append(temp)
                     #print("in N")
         #print len(self.pickupables)    
             
@@ -369,7 +368,6 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    self.pickupables.append(temp)
                    #print("in N")
                 if column == "W":
                     temp = Pickupable("inanimate", "cage")
@@ -383,7 +381,6 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    self.pickupables.append(temp)
                    #print("in N")
        #print len(self.pickupables)    
         #self.env.setX(self.env.getX() - 60)
