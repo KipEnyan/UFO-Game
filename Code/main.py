@@ -172,10 +172,7 @@ class World(DirectObject):
         for i in range(0,len(self.pickupables)):
             self.pickupables[i].pickup.removeNode()
             del self.pickupables[i].pickup
-        #print (len(self.pickupables))
-
-     
-        #print self.medal
+        
         if self.medal == "Gold":
             self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
         elif self.medal == "Silver":
@@ -183,7 +180,7 @@ class World(DirectObject):
         elif self.medal == "Bronze":
             self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
         
-        if self.Lvl < 3:
+        if self.Lvl < 4:
             self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
             self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
             self.Lvl += 1
@@ -297,7 +294,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print (len(self.pickupables)) 
+                    #print (len(self.pickupables)) 
                 if column == "S":
                     temp = Pickupable("animal", "sheep")
                     temp.pickup.setScale(1)
@@ -312,7 +309,7 @@ class World(DirectObject):
                     self.pickupables.append(temp)
                     print("in S")
                 if column == "P":
-                    temp = Pickupable("animal", "cow")
+                    temp = Pickupable("inanimate", "silo")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -362,7 +359,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    print("in N")
+                    #print("in N")
                 if column == "B":
                     temp = Pickupable("inanimate", "barn")
                     temp.pickup.setScale(1)
@@ -375,7 +372,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    print("in N")
+                    #print("in N")
                 if column == "W":
                     temp = Pickupable("inanimate", "cage")
                     temp.pickup.setScale(1)
@@ -388,8 +385,8 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    print("in N")
-                    print len(self.pickupables)    
+                    #print("in N")
+                    #print len(self.pickupables)    
         #self.env.setX(self.env.getX() - 60)
         #self.env.setP(self.env.getP() + 60)
       
