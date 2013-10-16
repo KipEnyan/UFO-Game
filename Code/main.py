@@ -87,7 +87,14 @@ class World(DirectObject):
         self.accept("k", self.setKey, ["k", 1])
         self.accept("k-up", self.setKey, ["k", 0])       
         self.accept("l", self.setKey, ["l", 1])
-        self.accept("l-up", self.setKey, ["l", 0])      
+        self.accept("l-up", self.setKey, ["l", 0]) 
+        
+        
+        self.mydir = os.path.abspath(sys.path[0])
+        self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
+        self.mydir = Filename(self.mydir)
+        self.mydir = self.mydir.toOsSpecific()
+       
         self.setupWASD()
             
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
