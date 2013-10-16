@@ -20,9 +20,8 @@ del base
 class World(DirectObject):
     def __init__(self):
 
-        self.accept("escape", sys.exit)
+        self.accept("escape", sys.exit) 
         self.accept("enter", self.loadGame)
-        #self.accept("C1_START_UP", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
         
         Lvl = 1
@@ -61,15 +60,14 @@ class World(DirectObject):
         
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -55, 65, 0, 50, 0)
+        camera.setPosHpr(0, -40, 73, 0, 0, 0)
         camera.lookAt(self.saucer.ship)
-        camera.setP(camera.getP() - 5)
-
+        camera.setP(camera.getP() -8)
         self.loadModels()
         self.loadHUD()
             
         self.setupLights()
-        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0,"k":0}
+        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0,"k":0,"l":0}
         self.prevtime = 0
   
         self.accept("arrow_right", self.setKey, ["right", 1])
@@ -86,7 +84,13 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
         
         self.accept("k", self.setKey, ["k", 1])
-        self.accept("k-up", self.setKey, ["k", 0]) 
+        self.accept("k-up", self.setKey, ["k", 0])       
+        self.accept("l", self.setKey, ["l", 1])
+        self.accept("l-up", self.setKey, ["l", 0]) 
+        
+        
+        self.accept("enter", self.blank)
+        self.accept("C1_START_DOWN", self.blank)
         
         self.mydir = os.path.abspath(sys.path[0])
         self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
@@ -110,12 +114,13 @@ class World(DirectObject):
             
         self.setupCollisions()
         self.accept("beam-pickupable", self.beamCollide)
-        ##########################
 
         #print "Level " + str(self.Lvl) 
         self.accept("space", self.loseGame)
+        self.accept("C1_X_DOWN", self.loseGame)
         self.accept("backspace", self.winGame)
-    #######################################    
+        self.accept("C1_Y_DOWN", self.winGame)
+      
     def loseGame(self):
         self.levelComplete = False
         #Clear stuff
@@ -139,9 +144,7 @@ class World(DirectObject):
         
         self.texte = OnscreenText(text="You Lose!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.textd = OnscreenText(text="Press Enter or Start to restart!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
-        #self.Lvl = 1
         self.accept("enter", self.nextLevel)
-        #self.accept("C1_START_UP", self.nextLevel)
         self.accept("C1_START_DOWN", self.nextLevel)
         
     def winGame(self):
@@ -173,12 +176,11 @@ class World(DirectObject):
         elif self.medal == "Silver":
             self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
         elif self.medal == "Bronze":
-            self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.1,.1,.2))    
+            self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
         self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
         self.Lvl += 1
         self.accept("enter", self.nextLevel)
-        #self.accept("C1_START_UP", self.nextLevel)
         self.accept("C1_START_DOWN", self.nextLevel)
         
     def nextLevel(self):
@@ -228,6 +230,9 @@ class World(DirectObject):
         self.accept("C1_LSTICK_HARDRIGHT", self.setKey, ["d", 1])
         self.accept("C1_LSTICK_SLIGHTRIGHT", self.setKey, ["d", 0])
         
+    def blank(self):
+        x=1
+        
         
     def stop(self, key1, value1, key2, value2, key3, value3, key4, value4):
         self.keyMap[key1] = value1
@@ -256,13 +261,13 @@ class World(DirectObject):
         self.map = open (self.mydir + "\Levels\level1.txt")
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
-        tsize = 1
+        tsize = 4
                 
         self.pickupables = []
         #self.animals = []
         #self.inanimates = []
         #self.hostiles = []
-        worldhalfwidth = 130
+        worldhalfwidth = 240
         worldradius = 43
         
         for i, row in enumerate(self.map):
@@ -351,11 +356,45 @@ class World(DirectObject):
                     #print("in N")
         #print len(self.pickupables)    
             
+                    print("in N")
+                if column == "B":
+                    temp = Pickupable()
+                    temp.setType("inanimate", "barn")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)    
+                    self.pickupables.append(temp)
+                    print("in N")
+                if column == "W":
+                    temp = Pickupable()
+                    temp.setType("inanimate", "cage")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)    
+                    self.pickupables.append(temp)
+                    print("in N")
+        print len(self.pickupables)    
+        #self.env.setX(self.env.getX() - 60)
+        #self.env.setP(self.env.getP() + 60)
       
     def setKey(self, key, value):
         self.keyMap[key] = value
         
-    def rotateWorld(self,task):
+    def rotateWorld(self,task): #Handles saucer movement, world rotation etc
         elapsed = task.time - self.prevtime
         self.prevtime = task.time
         
@@ -372,6 +411,15 @@ class World(DirectObject):
         ymov = 0
         accel = 0
         dir = -1
+        
+        if self.keyMap["l"]:
+            self.saucer.drop(self.env)
+            #for object in self.saucer.abductlist:
+                #object.abduct = False
+                #object.pickup.wrtReparentTo(self.env)
+                #object.pickup.setPos(self.saucer.dummy2.getX(),self.saucer.dummy2.getY(),self.saucer.dummy2.getZ())
+                #camera.lookAt(object.pickup)
+
         if self.keyMap["k"]:
             self.saucer.beamon = True
             
@@ -571,7 +619,7 @@ class World(DirectObject):
         #set to only be a "from" object
         cNode.setIntoCollideMask(BitMask32.allOff())
         cNodePath = self.saucer.dummy.attachNewNode(cNode)
-        cNodePath.setZ(-25)
+        cNodePath.setZ(-36)
         #cNodePath.show()
         base.cTrav.addCollider(cNodePath, self.cHandler)
         

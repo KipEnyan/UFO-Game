@@ -140,37 +140,38 @@ class pyPad360(DirectObject):
             elif e.type == JOYAXISMOTION:                
                 #Handle the left analog stick X axis
                 if (e.dict["axis"] == 0):
-                    if (e.dict["value"] > 0 and e.dict["value"] < 0.5):
+                    if (e.dict["value"] > 0 and e.dict["value"] < 0.3):
                         eventName = c_number +  "LSTICK_SLIGHTRIGHT"
                         messenger.send(eventName, []) 
                         #print "x=", e.dict["value"]
-                    elif (e.dict["value"] > 0.5 and e.dict["value"] < 1):
+                    elif (e.dict["value"] > 0.3 and e.dict["value"] < 1):
                         eventName = c_number +  "LSTICK_HARDRIGHT"
                         messenger.send(eventName, [])  
                         #print "x=", e.dict["value"]
-                    elif (e.dict["value"] < 0 and e.dict["value"] > -0.5):
+                    elif (e.dict["value"] < 0 and e.dict["value"] > -0.3):
                         eventName = c_number +  "LSTICK_SLIGHTLEFT"
                         messenger.send(eventName, [])   
                         #print "x=", e.dict["value"]
-                    elif (e.dict["value"] < -0.5 and e.dict["value"] > -1):
+                    elif (e.dict["value"] < -0.3 and e.dict["value"] > -1):
                         eventName = c_number +  "LSTICK_HARDLEFT"
                         messenger.send(eventName, []) 
                         #print "x=", e.dict["value"]
+                        
                 #Handle the left analog stick Y axis
                 elif (e.dict["axis"] == 1):
-                    if (e.dict["value"] < -0.5 and e.dict["value"] > -1):
+                    if (e.dict["value"] < -0.3 and e.dict["value"] > -1):
                         eventName = c_number +  "LSTICK_HARDUP"
                         messenger.send(eventName, [])  
                         #print "y=", e.dict["value"]
-                    elif (e.dict["value"] < 0 and e.dict["value"] > -0.5):
+                    elif (e.dict["value"] < 0 and e.dict["value"] > -0.3):
                         eventName = c_number +  "LSTICK_SLIGHTUP"
                         messenger.send(eventName, [])  
                         #print "y=", e.dict["value"]
-                    elif (e.dict["value"] > 0 and e.dict["value"] < 0.5):
+                    elif (e.dict["value"] > 0 and e.dict["value"] < 0.3):
                         eventName = c_number +  "LSTICK_SLIGHTDOWN"
                         messenger.send(eventName, [])      
                         #print "y=", e.dict["value"]
-                    elif (e.dict["value"] > 0.5 and e.dict["value"] < 1):
+                    elif (e.dict["value"] > 0.3 and e.dict["value"] < 1):
                         eventName = c_number +  "LSTICK_HARDDOWN"
                         messenger.send(eventName, [])
                         #print "y=", e.dict["value"]

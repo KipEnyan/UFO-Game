@@ -6,6 +6,12 @@ from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
 import sys, math, os, random
 
+from panda3d.core import Filename
+from utilities import resource_path
+
+from direct.particles.Particles import Particles
+from direct.particles.ParticleEffect import ParticleEffect
+
 class Pickupable(DirectObject):
     def __init__(self, type1, type2):
         self.type1 = type1
@@ -25,7 +31,7 @@ class Pickupable(DirectObject):
         #Being abducted?
         self.abduct = False 
         #When pickupable height reaches this level, it is abducted.
-        self.abductheight = 25
+        self.abductheight = 35
         
         #Height off of ground
         self.height = 0
@@ -38,6 +44,28 @@ class Pickupable(DirectObject):
         self.shakez = 0
         self.stuncount = 0
         taskMgr.add(self.moveTask, "moveTask")
+        taskMgr.add(self.particleTask, "particleTask")
+        base.enableParticles()
+        
+
+        
+        self.mydir = os.path.abspath(sys.path[0])
+        self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
+        self.mydir = Filename(self.mydir)
+        #self.mydir = self.mydir.toOsSpecific()
+        
+        self.bloodp = ParticleEffect()
+        self.bloodp.loadConfig(self.mydir + '/blood.ptf')
+        self.explodep = ParticleEffect()
+        self.explodep.loadConfig(self.mydir + '/explode.ptf')
+        self.particle = ParticleEffect()
+        self.particle.loadConfig(self.mydir + '/blood.ptf')
+        
+        
+        self.pcount = -6.66 #init to this number!
+        self.particletime = 70
+        
+        self.willdie = False
         
     def setType(self,type1,type2):
         self.type1 = type1
@@ -65,12 +93,12 @@ class Pickupable(DirectObject):
         self.stuncount = 0
         self.myship = ship
         self.height += .01 * self.weight * ship.beamspeed
-        self.pickup.setZ(-26 + self.height)
+        self.pickup.setZ(-36 + self.height)
 
         if type == 'animal':
-            self.pickup.setHpr(self.pickup.getH() + 1,self.pickup.getP() + 1,self.pickup.getR() + 1)
+            self.pickup.setHpr(self.pickup.getH() + 1,0,0)
         else:   
-            self.pickup.setHpr(self.pickup.getH() + .1,self.pickup.getP() + .1,self.pickup.getR() + .1)
+            self.pickup.setHpr(self.pickup.getH() + .5,0,0)
         if self.height >= self.abductheight:
             self.abducted()
         
@@ -83,6 +111,7 @@ class Pickupable(DirectObject):
         self.die()
     
     def die(self):      #Set self to dead, remove from render node. For recycler.
+        self.myship.abductAnimal()
         self.pickup.detachNode()
         self.pickup.remove()
         if self in self.myship.abductlist: 
@@ -93,31 +122,45 @@ class Pickupable(DirectObject):
                 self.myship.inanimates.remove(self)
             self.myship.findSpeed()
         self.alive = False
+        self.particle.disable()
         
+    def particleTask(self,task):
+        if self.pcount > 0:
+            self.pcount -= 1
+        elif (self.pcount <= 0) and (self.pcount != -6.66):
+            self.pcount = -6.66
+            self.particle.disable()
+            if self.willdie:
+                self.die()
+        return task.cont
+    
     def moveTask(self,task): #Responsible for falling when dropped, walking around(??)
-        if self.stunned:
-            if self.lr == False:
-                self.lr = True
-                self.shakex = self.pickup.getX()
-                self.shakey = self.pickup.getY()
-                self.shakez = self.pickup.getZ()
-            else:
-                self.pickup.setPos(self.shakex + random.uniform(-.1,.1),self.shakey + random.uniform(-.1,.1),self.shakez + random.uniform(-.1,.1))
-            self.stuncount += 1
-            if self.stuncount > 30:
-                self.resetStun()
-                
-        
-        if self.abduct == False:
-            if self.height > 0:
-                self.falling = True
-                self.fallspeed = self.fallspeed + ((.5 - self.fallspeed) * .05)
-                self.height -= self.fallspeed
-            elif self.height  <= 0:
-                if self.falling:
-                    self.height  = 0
-                    self.explode()
+        if not self.willdie:
+            if self.stunned:    
+                if self.lr == False:
+                    self.lr = True
+                    self.shakex = self.pickup.getX()
+                    self.shakey = self.pickup.getY()
+                    self.shakez = self.pickup.getZ()
+                else:
+                    self.pickup.setPos(self.shakex + random.uniform(-.1,.1),self.shakey + random.uniform(-.1,.1),self.shakez + random.uniform(-.1,.1))
+                self.stuncount += 1
+                if self.stuncount > 30:
+                    self.resetStun()
+                    
             
+            if self.abduct == False:
+                if self.height > 0:
+                    self.falling = True
+                    self.fallspeed = self.fallspeed + ((2 - self.fallspeed) * .01)
+                    self.height -= self.fallspeed
+                    self.pickup.setZ(self.pickup,-self.fallspeed)
+                elif self.height  <= 0:
+                    if self.falling:
+                        self.height  = 0
+                        self.explode()
+                        self.falling = False
+
         return task.cont
         
     def resetStun(self):
@@ -125,6 +168,16 @@ class Pickupable(DirectObject):
         self.lr = False
         self.stuncount = 0
         self.pickup.setPos(self.shakex,self.shakey,self.shakez)
-
+        
     def explode(self):
-        self.die()
+        self.pcount = self.particletime
+        if self.type == 'animal':
+            self.particle = self.bloodp
+        else:
+            self.particle = self.explodep
+        self.particle.start(parent = self.pickup, renderParent = self.pickup)
+        
+        self.pickup.setAlphaScale(0) 
+        self.pickup.setTransparency(TransparencyAttrib.MAlpha)
+        self.willdie = True
+        self.falling = False  
