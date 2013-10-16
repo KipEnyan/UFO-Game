@@ -24,7 +24,7 @@ class World(DirectObject):
         self.accept("escape", sys.exit) 
         self.accept("enter", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
-        
+        self.tractorbeamsound = base.loader.loadSfx("Sounds/tractorbeam.wav")
         Lvl = 1
         self.Lvl = Lvl
         
@@ -177,10 +177,7 @@ class World(DirectObject):
         for i in range(0,len(self.pickupables)):
             self.pickupables[i].pickup.removeNode()
             del self.pickupables[i].pickup
-        #print (len(self.pickupables))
-
-     
-        #print self.medal
+        
         if self.medal == "Gold":
             self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
         elif self.medal == "Silver":
@@ -188,7 +185,7 @@ class World(DirectObject):
         elif self.medal == "Bronze":
             self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
         
-        if self.Lvl < 3:
+        if self.Lvl < 4:
             self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
             self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
             self.Lvl += 1
@@ -318,7 +315,7 @@ class World(DirectObject):
                     self.pickupables.append(temp)
                    #print("in S")
                 if column == "P":
-                    temp = Pickupable("animal", "cow")
+                    temp = Pickupable("inanimate", "silo")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -429,6 +426,9 @@ class World(DirectObject):
                 #camera.lookAt(object.pickup)
 
         if self.keyMap["k"]:
+            if self.tractorbeamsound.status() != AudioSound.PLAYING:
+                self.tractorbeamsound.play()
+        
             self.saucer.beamon = True
             
             if self.xspeed > 30:
@@ -467,6 +467,8 @@ class World(DirectObject):
                 accel = .035
         else:
             self.saucer.beamon = False
+            if self.tractorbeamsound.status() == AudioSound.PLAYING:
+                self.tractorbeamsound.stop()
             
             if self.keyMap["w"]:
                 dir = 270
