@@ -143,6 +143,8 @@ class World(DirectObject):
         taskMgr.remove('textTask')
         taskMgr.remove('abductTask')
         taskMgr.remove('moveTask')
+        taskMgr.remove('missileSeekTask')
+        taskMgr.remove('ParticleTaskTask')
         
         self.env.removeNode()          
         del self.env
@@ -150,8 +152,8 @@ class World(DirectObject):
         del self.saucer.ship
         self.saucer.beam.removeNode()         
         del self.saucer.beam
-        self.timeroutline.removeNode()
-        del self.timeroutline
+        #self.timeroutline.removeNode()
+        #del self.timeroutline
         self.TimeText.destroy()
         del self.TimeText
         
@@ -171,7 +173,7 @@ class World(DirectObject):
         taskMgr.remove('textTask')
         taskMgr.remove('abductTask')
         taskMgr.remove('moveTask')
-        
+        taskMgr.remove('missileSeekTask')
         
         self.env.removeNode()          
         del self.env
@@ -615,11 +617,11 @@ class World(DirectObject):
         
         medal = "No Medal"
         self.medal = medal
-        if task.time <= 5:
+        if task.time <= 35:
             self.medal = "Gold"
-        elif task.time > 5 and task.time <=10:
+        elif task.time > 35 and task.time <=50:
             self.medal = "Silver"
-        elif task.time > 10:
+        elif task.time > 50:
             self.medal = "Bronze"
         
         self.AnimalsLeftText.setText(str(self.saucer.collected))
