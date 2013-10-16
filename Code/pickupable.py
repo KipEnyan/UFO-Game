@@ -7,51 +7,20 @@ from direct.task import Task         #for update functions
 import sys, math, os, random
 
 class Pickupable(DirectObject):
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.z = 0 
-    
-        #For recycling
-        self.alive = False
-        
-        #Type = class of object (animal, inanimate, hostile)
-        self.type = 'animal'
-        #Type2 = what kind of object of that class? (pig, cow, tank, car)
-        self.type2 = 'cow'
-        #Linked to how fast it is sucked up
-        self.weight = 1
-        #self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
-        #self.pickup.setScale(1)
-    
-        #code to add sounds
-        #thebase = ShowBase()
-        self.cowsound = base.loadMusic("Sounds/cow.wav")
-        self.cowsound2 = base.loadMusic("Sounds/cow1.wav")
-        self.cowsound3 = base.loadMusic("Sounds/cow2.wav")
-        self.cowsound4 = base.loadMusic("Sounds/cow3.wav")
-        self.sheepsound = base.loadMusic("Sounds/sheep.wav")
-        self.sheepsound2 = base.loadMusic("Sounds/sheep1.wav")
-        self.sheepsound3 = base.loadMusic("Sounds/sheep2.wav")
-        self.sheepsound4 = base.loadMusic("Sounds/sheep3.wav")
-        self.pigsound = base.loadMusic("Sounds/cow.wav")
-        self.pigsound2 = base.loadMusic("Sounds/cow1.wav")
-        self.pigsound3 = base.loadMusic("Sounds/cow2.wav")
-        self.pigsound4 = base.loadMusic("Sounds/cow3.wav")
-        self.screamsound = base.loadMusic("Sounds/scream.wav")
-        self.screamsound2 = base.loadMusic("Sounds/scream1.wav")
-        self.screamsound3 = base.loadMusic("Sounds/scream2.wav")
-        self.screamsound4 = base.loadMusic("Sounds/scream3.wav")
-        
-        #add animal sounds to lists
-        self.cowsounds = [self.cowsound, self.cowsound2, self.cowsound3, self.cowsound4]
-        self.sheepsounds = [self.sheepsound, self.sheepsound2, self.sheepsound3, self.sheepsound4]
-        self.pigsounds = [self.pigsound, self.pigsound2, self.pigsound3, self.pigsound4]
-        self.screamsounds = [self.screamsound, self.screamsound2, self.screamsound3, self.screamsound4]
-        
-        
-        #Should point to player
-        self.player = 0
+    def __init__(self, type1, type2):
+        self.type1 = type1
+        self.type2 = type2
+        self.sounds = []
+
+        if self.type1 == "animal":
+            for i in range(4):
+                sound = base.loader.loadSfx("Sounds/" + self.type2 + str(i) + ".wav")
+                self.sounds.append(sound)
+
+            self.weight = 1
+
+        self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
+        self.pickup.setScale(1)  
         
         #Being abducted?
         self.abduct = False 
@@ -67,19 +36,19 @@ class Pickupable(DirectObject):
         self.shakex = 0
         self.shakey = 0 
         self.shakez = 0
-        self.stuncount =0
+        self.stuncount = 0
         taskMgr.add(self.moveTask, "moveTask")
         
-    def setType(self,type,type2):
-        self.type = type
+    def setType(self,type1,type2):
+        self.type1 = type1
         self.type2 = type2
-        if self.type == 'animal':
+        if self.type1 == 'animal':
             self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
             self.weight = 1
-        if self.type ==  'inanimate':
+        if self.type1 ==  'inanimate':
             self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
             self.weight = 2
-        if self.type ==  'hostile':
+        if self.type1 ==  'hostile':
             self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")        
             self.weight = 2
             
@@ -107,25 +76,9 @@ class Pickupable(DirectObject):
         
     
     def playAnimalSound(self):
-        if self.type2 == 'pig':
-            randSound = random.choice(self.pigsounds)
-            randSound.play()
-        if self.type2 == 'cow':
-            randSound = random.choice(self.cowsounds)
-            randSound.play()
-        if self.type2 == 'sheep':
-            randSound = random.choice(self.sheepsounds)
-            randSound.play()    
-        if self.type2 == 'panda':
-            randSound = random.choice(self.pandasounds)
-            randSound.play()
-        if self.type == 'hostile':
-            randSound = random.choice(self.screamsounds)
-            randSound.play()
-            
-    
-    
-    
+        randSound = random.choice(self.sounds)
+        randSound.play()
+             
     def abducted(self):
         self.die()
     

@@ -29,7 +29,7 @@ class World(DirectObject):
         self.Lvl = Lvl
         
         gamepads = pyPad360()
-        #print gamepads.setupGamepads()
+        ##print gamepads.setupGamepads()
         if gamepads.setupGamepads() > 0:
             gamepads.setupGamepads()
             taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
@@ -42,7 +42,7 @@ class World(DirectObject):
         
         self.text1 = OnscreenText(text="Press Enter to Start",style=1, fg=(0.8,0,0.1,1),pos=(0, -0.88), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.inGame = False
-        print self.text1
+        #print self.text1
         
         
     def loadGame(self):
@@ -112,7 +112,7 @@ class World(DirectObject):
         self.accept("beam-pickupable", self.beamCollide)
         ##########################
 
-        print "Level " + str(self.Lvl) 
+        #print "Level " + str(self.Lvl) 
         self.accept("space", self.loseGame)
         self.accept("backspace", self.winGame)
     #######################################    
@@ -167,7 +167,7 @@ class World(DirectObject):
             del self.pickupables[i].pickup
 
      
-        print self.medal
+        #print self.medal
         if self.medal == "Gold":
             self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
         elif self.medal == "Silver":
@@ -270,9 +270,8 @@ class World(DirectObject):
                 if column == "-":
                     pass
                 if column == "C":
-                    temp = Pickupable()
-                    print("in cow")
-                    temp.setType("animal","cow")
+                    temp = Pickupable("animal","cow")
+                    #print("in cow")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -283,10 +282,9 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print (len(self.pickupables)) 
+                    #print (len(self.pickupables)) 
                 if column == "S":
-                    temp = Pickupable()
-                    temp.setType("animal", "sheep")
+                    temp = Pickupable("animal", "sheep")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -297,10 +295,9 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print("in S")
+                    #print("in S")
                 if column == "P":
-                    temp = Pickupable()
-                    temp.setType("animal", "cow")
+                    temp = Pickupable("animal", "cow")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -311,10 +308,9 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print("in P")
+                    #print("in P")
                 if column == "B":
-                    temp = Pickupable()
-                    temp.setType("animal", "pig")
+                    temp = Pickupable("animal", "pig")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -325,10 +321,9 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print("in B")
+                    #print("in B")
                 if column == "M":    
-                    temp = Pickupable()
-                    temp.setType("hostile", "missile")
+                    temp = Pickupable("hostile", "missile")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -339,10 +334,9 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print("in M")
+                    #print("in M")
                 if column == "N":
-                    temp = Pickupable()
-                    temp.setType("inanimate", "tractor")
+                    temp = Pickupable("inanimate", "tractor")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -354,8 +348,8 @@ class World(DirectObject):
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
                     self.pickupables.append(temp)
-                    print("in N")
-        print len(self.pickupables)    
+                    #print("in N")
+        #print len(self.pickupables)    
             
       
     def setKey(self, key, value):
@@ -466,7 +460,7 @@ class World(DirectObject):
         self.saucer.ship.setR(self.xspeed * .2)
         self.saucer.ship.setP(self.yspeed * .2)
             
-        #print self.env.getX()
+        ##print self.env.getX()
         return Task.cont
             
     def loadModels(self):
