@@ -1,3 +1,6 @@
+import direct.directbase.DirectStart
+from direct.showbase.DirectObject import DirectObject
+
 class Missile(DirectObject):
 	def __init__(self, x, y, z):
 		self.model = loader.loadModel("missile")

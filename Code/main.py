@@ -14,6 +14,7 @@ from panda3d.core import Filename
 from utilities import resource_path
 from saucer import*
 from pickupable import*
+from missile import *
 
 del base
 
@@ -100,10 +101,13 @@ class World(DirectObject):
         self.setupWASD()
             
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
+        taskMgr.add(self.missileSeek, "missileSeekTask")
             
         self.animalsleft = 2
+        self.missiles = []
             
         taskMgr.add(self.textTask, "textTask")
+
      
         self.xspeed = 0
         self.yspeed = 0
@@ -114,8 +118,9 @@ class World(DirectObject):
             
         self.setupCollisions()
         self.accept("beam-pickupable", self.beamCollide)
+        self.accept("ufo-tankdetect", self.tankShoot)
 
-        print "Level " + str(self.Lvl) 
+       #print "Level " + str(self.Lvl) 
         self.accept("space", self.loseGame)#Goes to Level Failed screen. For testing purposes
         self.accept("C1_X_DOWN", self.loseGame)
         self.accept("backspace", self.winGame) #Goes to Level Complete screen. For testing purposes
@@ -265,6 +270,7 @@ class World(DirectObject):
         self.accept("d", self.setKey, ["d", 1])
         self.accept("d-up", self.setKey, ["d", 0])
             
+
     def loadLevel(self):
         #self.map = open("C:\Users\Vanded3\Documents\ufo-game2\Code\Levels\level1.txt")
         #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
@@ -297,7 +303,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print (len(self.pickupables)) 
+                   #print (len(self.pickupables)) 
                 if column == "S":
                     temp = Pickupable("animal", "sheep")
                     temp.pickup.setScale(1)
@@ -310,7 +316,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
-                    print("in S")
+                   #print("in S")
                 if column == "P":
                     temp = Pickupable("animal", "cow")
                     temp.pickup.setScale(1)
@@ -338,7 +344,7 @@ class World(DirectObject):
                     self.pickupables.append(temp)
                     #print("in B")
                 if column == "M":    
-                    temp = Pickupable("hostile", "missile")
+                    temp = Pickupable("hostile", "tank")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -362,7 +368,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    print("in N")
+                   #print("in N")
                 if column == "B":
                     temp = Pickupable("inanimate", "barn")
                     temp.pickup.setScale(1)
@@ -375,7 +381,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    print("in N")
+                   #print("in N")
                 if column == "W":
                     temp = Pickupable("inanimate", "cage")
                     temp.pickup.setScale(1)
@@ -388,8 +394,8 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    print("in N")
-                    print len(self.pickupables)    
+                   #print("in N")
+                   #print len(self.pickupables)    
         #self.env.setX(self.env.getX() - 60)
         #self.env.setP(self.env.getP() + 60)
       
@@ -612,7 +618,14 @@ class World(DirectObject):
         #set the collision handler to send event messages on collision
         self.cHandler = CollisionHandlerEvent()
         # %in is substituted with the name of the into object
-        self.cHandler.setInPattern("beam-%in")
+        self.cHandler.setInPattern("%fn-%in")
+
+        cSphere = CollisionSphere((0,0,0), 2)
+        cNode = CollisionNode("ship")
+        cNode.addSolid(cSphere)
+        cNode.setIntoCollideMask(BitMask32.allOff())
+        cNodePath = self.saucer.ship.attachNewNode(cNode)
+
         
         #saucer collider
         cSphere = CollisionSphere((0,0,0), 2)
@@ -631,6 +644,12 @@ class World(DirectObject):
             cNode = CollisionNode("pickupable")
             cNode.addSolid(cSphere)
             cNodePath = p.pickup.attachNewNode(cNode)
+
+            if p.type2 == "tank":
+                cSphere = CollisionSphere((0,0,0), 25)
+                cNode = CollisionNode("tankdetect")
+                cNode.addSolid(cSphere)
+                cNodePath = p.pickup.attachNewNode(cNode)
             #cNodePath.show()
     
     def beamCollide(self, cEntry):
@@ -641,6 +660,15 @@ class World(DirectObject):
                 if (x.pickup == obj):
                     self.saucer.pickUp(x)
                     return
+
+    def tankShoot(self, cEntry):
+        tank = cEntry.getIntoNodePath()
+        newMissile = Missile(tank.getX(), tank.getY(), tank.getZ())
+        self.missiles.append[newMissile]
+
+    def missileSeek(self, task):
+        for i in self.missiles:
+            i.seek(self.saucer.ship)
 
         
 w = World()
