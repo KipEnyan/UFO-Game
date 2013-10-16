@@ -116,9 +116,9 @@ class World(DirectObject):
         self.accept("beam-pickupable", self.beamCollide)
 
         print "Level " + str(self.Lvl) 
-        self.accept("space", self.loseGame)
+        self.accept("space", self.loseGame)#Goes to Level Failed screen. For testing purposes
         self.accept("C1_X_DOWN", self.loseGame)
-        self.accept("backspace", self.winGame)
+        self.accept("backspace", self.winGame) #Goes to Level Complete screen. For testing purposes
         self.accept("C1_Y_DOWN", self.winGame)
       
     def loseGame(self):
@@ -133,6 +133,8 @@ class World(DirectObject):
         del self.env
         self.saucer.ship.removeNode()         
         del self.saucer.ship
+        self.saucer.beam.removeNode()         
+        del self.saucer.beam
         self.timeroutline.removeNode()
         del self.timeroutline
         self.TimeText.destroy()
@@ -160,6 +162,8 @@ class World(DirectObject):
         del self.env
         self.saucer.ship.removeNode()         
         del self.saucer.ship
+        self.saucer.beam.removeNode()         
+        del self.saucer.beam
         
         self.AnimalsLeft.destroy()
         del self.AnimalsLeft
@@ -168,6 +172,7 @@ class World(DirectObject):
         for i in range(0,len(self.pickupables)):
             self.pickupables[i].pickup.removeNode()
             del self.pickupables[i].pickup
+        #print (len(self.pickupables))
 
      
         print self.medal
@@ -177,12 +182,15 @@ class World(DirectObject):
             self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
         elif self.medal == "Bronze":
             self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
-        self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
-        self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
-        self.Lvl += 1
-        self.accept("enter", self.nextLevel)
-        self.accept("C1_START_DOWN", self.nextLevel)
         
+        if self.Lvl < 3:
+            self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
+            self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
+            self.Lvl += 1
+            self.accept("enter", self.nextLevel)
+            self.accept("C1_START_DOWN", self.nextLevel)
+        else:
+            self.texte = OnscreenText(text="You Finished the Game!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
     def nextLevel(self):
         self.skybox.removeNode()          
         del self.skybox
@@ -210,6 +218,8 @@ class World(DirectObject):
         #Accept each message and do something based on the button
         self.accept("C1_A_DOWN", self.setKey, ["k", 1])
         self.accept("C1_A_UP", self.setKey,["k",0])
+        self.accept("C1_B_DOWN", self.setKey, ["l", 1])
+        self.accept("C1_B_UP", self.setKey,["l",0])
         
         self.accept("C1_DPAD_UP", self.setKey, ["w", 1])
         self.accept("C1_DPAD_DOWN", self.setKey,["s",1])
@@ -258,7 +268,7 @@ class World(DirectObject):
     def loadLevel(self):
         #self.map = open("C:\Users\Vanded3\Documents\ufo-game2\Code\Levels\level1.txt")
         #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
-        self.map = open (self.mydir + "\Levels\level1.txt")
+        self.map = open (self.mydir + "\Levels\level" + str(self.Lvl) + ".txt")
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
         tsize = 4
@@ -358,7 +368,7 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    self.pickupables.append(temp)
+                    #self.pickupables.append(temp)
                     print("in N")
                 if column == "B":
                     temp = Pickupable()
@@ -373,7 +383,6 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    self.pickupables.append(temp)
                     print("in N")
                 if column == "W":
                     temp = Pickupable()
@@ -388,7 +397,6 @@ class World(DirectObject):
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
-                    self.pickupables.append(temp)
                     print("in N")
         print len(self.pickupables)    
         #self.env.setX(self.env.getX() - 60)
