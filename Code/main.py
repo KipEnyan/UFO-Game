@@ -25,7 +25,7 @@ class World(DirectObject):
         self.accept("enter", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
         self.tractorbeamsound = base.loader.loadSfx("Sounds/tractorbeam.wav")
-        Lvl = 3
+        Lvl = 1
         self.Lvl = Lvl
         
         gamepads = pyPad360()
