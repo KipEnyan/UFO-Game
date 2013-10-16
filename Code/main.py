@@ -314,7 +314,7 @@ class World(DirectObject):
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
                     #print("in P")
-                if column == "B":
+                if column == "0":
                     temp = Pickupable("animal", "pig")
                     temp.pickup.setScale(1)
                     angle = i * .1
@@ -356,10 +356,9 @@ class World(DirectObject):
                     #print("in N")
         #print len(self.pickupables)    
             
-                    print("in N")
+                   #print("in N")
                 if column == "B":
-                    temp = Pickupable()
-                    temp.setType("inanimate", "barn")
+                    temp = Pickupable("inanimate", "barn")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -371,10 +370,9 @@ class World(DirectObject):
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
                     self.pickupables.append(temp)
-                    print("in N")
+                   #print("in N")
                 if column == "W":
-                    temp = Pickupable()
-                    temp.setType("inanimate", "cage")
+                    temp = Pickupable("inanimate", "cage")
                     temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
@@ -386,8 +384,8 @@ class World(DirectObject):
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
                     self.pickupables.append(temp)
-                    print("in N")
-        print len(self.pickupables)    
+                   #print("in N")
+       #print len(self.pickupables)    
         #self.env.setX(self.env.getX() - 60)
         #self.env.setP(self.env.getP() + 60)
       

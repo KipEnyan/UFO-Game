@@ -171,7 +171,7 @@ class Pickupable(DirectObject):
         
     def explode(self):
         self.pcount = self.particletime
-        if self.type == 'animal':
+        if self.type1 == 'animal':
             self.particle = self.bloodp
         else:
             self.particle = self.explodep
