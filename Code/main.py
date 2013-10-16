@@ -108,7 +108,7 @@ class World(DirectObject):
             
         taskMgr.add(self.textTask, "textTask")
 
-
+        self.saucer.ship.setColorScale(1,1,1,1)
         self.missileSound = base.loader.loadSfx("Sounds/tankshot.wav")
         self.missileHitSound = base.loader.loadSfx("Sounds/missile.wav")
         self.xspeed = 0
@@ -699,6 +699,11 @@ class World(DirectObject):
                 self.missileHitSound.play()
                 i.model.removeNode()
                 self.missiles.remove(i)
+                self.saucer.health -= 20
+                if self.saucer.health <=0:
+                    self.loseGame()
+                elif self.saucer.health <= 50:
+                    self.saucer.ship.setColorScale(1,.5,.5,1)
                 return
         
 w = World()

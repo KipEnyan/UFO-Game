@@ -14,6 +14,7 @@ class Saucer(DirectObject):
     
         self.ship = loader.loadModel("Art\ufo.egg")
         self.beam = loader.loadModel("Art\eam.egg")
+        self.health = 100
       
         #Dummy is used to position the tractor beam collisionsphere
         self.dummy = NodePath('dummy')
