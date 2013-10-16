@@ -20,24 +20,55 @@ del base
 class World(DirectObject):
     def __init__(self):
 
-        self.saucer = Saucer()
-        base.disableMouse()
-        camera.setPosHpr(0, -55, 65, 0, 50, 0)
-        camera.lookAt(self.saucer.ship)
-        camera.setP(camera.getP() - 5)
-        self.loadModels()
-        self.loadHUD()
+        self.accept("escape", sys.exit)
+        self.accept("enter", self.loadGame)
+        #self.accept("C1_START_UP", self.goToGame)
+        #self.accept("C1_START_DOWN", self.goToGame)
+        Lvl = 1
+        self.Lvl = Lvl
         
         gamepads = pyPad360()
         gamepads.setupGamepads()
         taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
         self.gameControls360()
         
+        self.title = loader.loadModel("Art/skybox.egg")
+        self.title.reparentTo(render)
+        self.title.setScale(1)
+        self.title.setPos(0, 0, -55)
+        
+        self.text1 = OnscreenText(text="Press Enter to Start",style=1, fg=(0.8,0,0.1,1),pos=(0, -0.88), scale = .2,mayChange = 1,align=TextNode.ACenter)
+        self.inGame = False
+        print self.text1
+        
+        
+    def loadGame(self):
+        
+        if not self.inGame:
+            self.inGame = True
+            self.title.removeNode()          
+            del self.title
+            self.text1.destroy()
+            del self.text1
+            
+            self.startGame()
+ 
+    def startGame(self):        
+        #if self.inGame == True:
+        
+        self.saucer = Saucer()
+        base.disableMouse()
+        camera.setPosHpr(0, -55, 65, 0, 50, 0)
+        camera.lookAt(self.saucer.ship)
+        camera.setP(camera.getP() - 5)
+
+        self.loadModels()
+        self.loadHUD()
+            
         self.setupLights()
         self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0,"k":0}
         self.prevtime = 0
-        self.accept("escape", sys.exit)
-        
+  
         self.accept("arrow_right", self.setKey, ["right", 1])
         self.accept("arrow_left", self.setKey, ["left", 1])
         self.accept("arrow_right-up", self.setKey, ["right", 0])
@@ -52,36 +83,130 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
         
         self.accept("k", self.setKey, ["k", 1])
-        self.accept("k-up", self.setKey, ["k", 0])       
-
+        self.accept("k-up", self.setKey, ["k", 0]) 
+        
         self.mydir = os.path.abspath(sys.path[0])
         self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
         self.mydir = Filename(self.mydir)
         self.mydir = self.mydir.toOsSpecific()
-
-        
-        
-        
+       
         self.setupWASD()
-        
+            
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
-        
+            
         self.animalsleft = 2
-        
+            
         taskMgr.add(self.textTask, "textTask")
-
+     
         self.xspeed = 0
         self.yspeed = 0
         #For recycler
         self.xbounds = 130
         self.currentpickupable = 0
         self.loadLevel()
-        
+            
         self.setupCollisions()
         self.accept("beam-pickupable", self.beamCollide)
+        ##########################
+
+        print "Level " + str(self.Lvl) 
+        self.accept("space", self.loseGame)
+        self.accept("backspace", self.winGame)
+    #######################################    
+    def loseGame(self):
+        self.levelComplete = False
+        #Clear stuff
+        taskMgr.remove('rotateWorldTask')
+        taskMgr.remove('textTask')
+        taskMgr.remove('abductTask')
+        taskMgr.remove('moveTask')
+        
+        self.env.removeNode()          
+        del self.env
+        self.saucer.ship.removeNode()         
+        del self.saucer.ship
+        self.timeroutline.removeNode()
+        del self.timeroutline
+        self.TimeText.destroy()
+        del self.TimeText
+        self.AnimalsLeft.destroy()
+        del self.AnimalsLeft
+        self.AnimalsLeftText.destroy()
+        del self.AnimalsLeftText
+        
+        for i in range(0,len(self.pickupables)):
+            self.pickupables[i].pickup.removeNode()
+            del self.pickupables[i].pickup
+        
+        self.texte = OnscreenText(text="You Lose!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
+        self.textd = OnscreenText(text="Press Enter or Start to restart!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
+        #self.Lvl = 1
+        self.accept("enter", self.nextLevel)
+        
+    def winGame(self):
+        self.levelComplete = True
+        #Clear Stuff
+        taskMgr.remove('rotateWorldTask')
+        taskMgr.remove('textTask')
+        taskMgr.remove('abductTask')
+        taskMgr.remove('moveTask')
+        
+        
+        self.env.removeNode()          
+        del self.env
+        self.saucer.ship.removeNode()         
+        del self.saucer.ship
+        self.timeroutline.removeNode()
+        del self.timeroutline
+        self.TimeText.destroy()
+        del self.TimeText
+        self.AnimalsLeft.destroy()
+        del self.AnimalsLeft
+        self.AnimalsLeftText.destroy()
+        del self.AnimalsLeftText
+        #self.pickupables[251].pickup.removeNode()
+        #del self.pickupables[251].pickup
+        for i in range(0,len(self.pickupables)):
+            self.pickupables[i].pickup.removeNode()
+            del self.pickupables[i].pickup
+        #print (len(self.pickupables))
+        """for enemy in self.pickupables:
+            enemy.pickup.removeNode()
+            del enemy.pickup"""
+        
+        
+        print self.medal
+        if self.medal == "Gold":
+            self.timeroutline = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .76), scale = (.2,1,.2))
+        elif self.medal == "Silver":
+            self.timeroutline = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .76), scale = (.125,1,.225))
+        elif self.medal == "Bronze":
+            self.timeroutline = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .76), scale = (.1,.1,.2))    
+        self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
+        self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
+        self.Lvl += 1
+        self.accept("enter", self.nextLevel)
+        
+        
+    def nextLevel(self):
+        self.skybox.removeNode()          
+        del self.skybox
+        self.texte.destroy()
+        del self.texte
+        self.textd.destroy()
+        del self.textd
+        
+        if self.levelComplete == True:
+            self.timeroutline.removeNode()          
+            del self.timeroutline
+
+        self.startGame()
         
     def gameControls360(self):   
         #Accept each message and do something based on the button
+        self.accept("C1_A_DOWN", self.setKey, ["k", 1])
+        self.accept("C1_A_UP", self.setKey,["k",0])
+        
         self.accept("C1_DPAD_UP", self.setKey, ["w", 1])
         self.accept("C1_DPAD_DOWN", self.setKey,["s",1])
         self.accept("C1_DPAD_LEFT", self.setKey, ["a", 1])
@@ -377,11 +502,11 @@ class World(DirectObject):
 
     def loadHUD(self):
         #Draw image as outline for timer
-        timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
+        self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
        
         #Draw num of animals left
         num = str(200000)
-        AnimalsLeft = OnscreenText(text="Animals Left:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
+        self.AnimalsLeft = OnscreenText(text="Animals Left:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
         self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(0,0,0,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
        
        #Draw time        
@@ -406,6 +531,14 @@ class World(DirectObject):
 
         self.TimeText.setText(self.mytimer)
         
+        medal = "No Medal"
+        self.medal = medal
+        if task.time <= 5:
+            self.medal = "Gold"
+        elif task.time > 5 and task.time <=10:
+            self.medal = "Silver"
+        elif task.time > 10:
+            self.medal = "Bronze"
         
         self.AnimalsLeftText.setText(str(self.animalsleft))
         return Task.cont
