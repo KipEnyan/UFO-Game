@@ -4,13 +4,16 @@ from direct.showbase.DirectObject import DirectObject  #for event handling
 from direct.actor.Actor import Actor #for animated models
 from direct.interval.IntervalGlobal import *  #for compound intervals
 from direct.task import Task         #for update functions
-import sys, math, random
+import sys, math, random,os
+
+from direct.particles.Particles import Particles
+from direct.particles.ParticleEffect import ParticleEffect
 
 class Saucer(DirectObject):
     def __init__(self):
     
         self.ship = loader.loadModel("Art\ufo.egg")
-        #self.beam = loader.loadmodel("Art\
+        self.beam = loader.loadModel("Art\eam.egg")
       
         #Dummy is used to position the tractor beam collisionsphere
         self.dummy = NodePath('dummy')
@@ -20,6 +23,8 @@ class Saucer(DirectObject):
         self.dummy2 =  NodePath('dummy2')
         self.dummy2.reparentTo(render)
 
+        self.beam.reparentTo(self.dummy2)
+        
         self.glownode = self.ship.find("**/l_glownode")
         self.glownode.setColor(0,0,.5,1)
         
@@ -29,9 +34,9 @@ class Saucer(DirectObject):
         self.ship.reparentTo(render)
         self.ship.setScale(1)
         #self.ship.setH(180)
-        self.ship.setPos(0,0,15)
-        self.dummy.setPos(0,0,15)
-        self.dummy2.setPos(0,0,15)
+        self.ship.setPos(0,0,25)
+        self.dummy.setPos(0,0,25)
+        self.dummy2.setPos(0,0,25)
         
         #list of things currently abducting
         self.abductlist = []
@@ -46,17 +51,29 @@ class Saucer(DirectObject):
         self.basebeamspeed = 1
         
         self.beamon = True
+        
+        taskMgr.add(self.particleTask, "shipparticleTask")
+
+        self.mydir = os.path.abspath(sys.path[0])
+        self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
+        self.mydir = Filename(self.mydir)
+        #self.mydir = self.mydir.toOsSpecific()
+        
+        self.abductp = ParticleEffect()
+        self.abductp.loadConfig(self.mydir + '/abduct.ptf')
+        self.pcount = 0
+        self.particletime = 60 #Must be integer 
 
     def pickUp(self,object):   #Pick up another pickupable 
         if object.stuncount < self.stuntime:
             object.stunned = True
         else:
             if (len(self.abductlist) < 15):
-                if object.type == 'inanimate':
+                if object.type1 == 'inanimate':
                     self.inanimates.append(object)
-                elif object.type == 'hostile':
+                elif object.type1 == 'hostile':
                     self.inanimates.append(object)
-                elif object.type == 'animal':
+                elif object.type1 == 'animal':
                     self.animals.append(object)
                     
                 self.findSpeed()
@@ -64,18 +81,19 @@ class Saucer(DirectObject):
                 object.resetStun()
                 object.abduct = True
                 self.abductlist.append(object)
-                object.playAnimalSound()
+                object.playPickupSound()
                 object.pickup.reparentTo(self.dummy2)
                 object.pickup.setHpr(0,0,0)
-                object.pickup.setPos(0,0,-26)
+                object.pickup.setPos(0,0,-37)
             else:
                 print ("Pickup list full.")
     
-    def drop(self): #Drop all
+    def drop(self,env): #Drop all
         for object in self.abductlist:
             object.abduct = False
-            object.pickup.reparentTo(render)
-        self.abductlist = []
+            object.pickup.wrtReparentTo(env)
+            #object.pickup.setPos(self.dummy2.getX(),self.dummy2.getY(),self.dummy2.getZ())
+        self.abductlist[:] = []
  
     def lightTask(self,task):
         if not self.beamon:
@@ -92,7 +110,7 @@ class Saucer(DirectObject):
             self.dummy.setZ(self.ship.getZ())
             self.updown = False
         else:
-            self.dummy.setZ(25)
+            self.dummy.setZ(36)
             self.updown = True
     
         for obj in self.abductlist:
@@ -150,5 +168,20 @@ class Saucer(DirectObject):
         if self.stuntime < 2:
             self.stuntime = 2
         
-        if self.beamspeed < .6:
-            self.beamspeed = .6
+        #Minimum beam speed
+        if self.beamspeed < 1:
+            self.beamspeed = 1
+            
+    def abductAnimal(self):
+        self.pcount = self.particletime
+
+        
+    def particleTask(self,task):
+        if self.pcount > 0:
+            self.pcount -= 1
+        elif self.pcount == 0:
+            self.pcount = -1
+            #self.abductp.reset()
+            self.abductp.disable()
+            
+        return task.cont
