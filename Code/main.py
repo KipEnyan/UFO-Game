@@ -20,16 +20,15 @@ del base
 class World(DirectObject):
     def __init__(self):
 
-        self.accept("escape", sys.exit)
+        self.accept("escape", sys.exit) 
         self.accept("enter", self.loadGame)
-        #self.accept("C1_START_UP", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
         
         Lvl = 1
         self.Lvl = Lvl
         
         gamepads = pyPad360()
-        #print gamepads.setupGamepads()
+        print gamepads.setupGamepads()
         if gamepads.setupGamepads() > 0:
             gamepads.setupGamepads()
             taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
@@ -88,6 +87,9 @@ class World(DirectObject):
         self.accept("k", self.setKey, ["k", 1])
         self.accept("k-up", self.setKey, ["k", 0]) 
         
+        self.accept("enter", self.blank)
+        self.accept("C1_START_DOWN", self.blank)
+        
         self.mydir = os.path.abspath(sys.path[0])
         self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
         self.mydir = Filename(self.mydir)
@@ -110,12 +112,13 @@ class World(DirectObject):
             
         self.setupCollisions()
         self.accept("beam-pickupable", self.beamCollide)
-        ##########################
 
         print "Level " + str(self.Lvl) 
         self.accept("space", self.loseGame)
+        self.accept("C1_X_DOWN", self.loseGame)
         self.accept("backspace", self.winGame)
-    #######################################    
+        self.accept("C1_Y_DOWN", self.winGame)
+      
     def loseGame(self):
         self.levelComplete = False
         #Clear stuff
@@ -139,9 +142,7 @@ class World(DirectObject):
         
         self.texte = OnscreenText(text="You Lose!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.textd = OnscreenText(text="Press Enter or Start to restart!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
-        #self.Lvl = 1
         self.accept("enter", self.nextLevel)
-        #self.accept("C1_START_UP", self.nextLevel)
         self.accept("C1_START_DOWN", self.nextLevel)
         
     def winGame(self):
@@ -173,12 +174,11 @@ class World(DirectObject):
         elif self.medal == "Silver":
             self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
         elif self.medal == "Bronze":
-            self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.1,.1,.2))    
+            self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
         self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
         self.Lvl += 1
         self.accept("enter", self.nextLevel)
-        #self.accept("C1_START_UP", self.nextLevel)
         self.accept("C1_START_DOWN", self.nextLevel)
         
     def nextLevel(self):
@@ -227,6 +227,9 @@ class World(DirectObject):
         self.accept("C1_LSTICK_SLIGHTLEFT", self.setKey, ["a", 0])
         self.accept("C1_LSTICK_HARDRIGHT", self.setKey, ["d", 1])
         self.accept("C1_LSTICK_SLIGHTRIGHT", self.setKey, ["d", 0])
+        
+    def blank(self):
+        x=1
         
         
     def stop(self, key1, value1, key2, value2, key3, value3, key4, value4):
