@@ -69,11 +69,11 @@ class Saucer(DirectObject):
             object.stunned = True
         else:
             if (len(self.abductlist) < 15):
-                if object.type == 'inanimate':
+                if object.type1 == 'inanimate':
                     self.inanimates.append(object)
-                elif object.type == 'hostile':
+                elif object.type1 == 'hostile':
                     self.inanimates.append(object)
-                elif object.type == 'animal':
+                elif object.type1 == 'animal':
                     self.animals.append(object)
                     
                 self.findSpeed()
