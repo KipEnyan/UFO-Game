@@ -404,10 +404,10 @@ class World(DirectObject):
         self.prevtime = task.time
         
         # Create a handle for pointer device #0
-        m = base.win.getPointer( 0 )
+        #m = base.win.getPointer( 0 )
         # Get the absolute [x,y] screen coordinates of the cursor
-        x = m.getX( )
-        y = m.getY( )
+        #x = m.getX( )
+        #y = m.getY( )
 
         centerx = 400
         centery = 300
@@ -493,9 +493,9 @@ class World(DirectObject):
             accel = .07
 
             
-        if base.win.movePointer( 0, centerx, centery ):
-               xmov += ( x - centerx ) * 1
-               ymov += ( y - centery ) * 1
+        #if base.win.movePointer( 0, centerx, centery ):
+        #       xmov += ( x - centerx ) * 1
+        #       ymov += ( y - centery ) * 1
 
         if self.env.getX() > self.xbounds:
             if xmov < 0:
