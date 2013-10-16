@@ -49,7 +49,7 @@ class Saucer(DirectObject):
         self.stunbase = 30
         self.updown = False
         self.beamspeed = 1
-        self.basebeamspeed = 1
+        self.basebeamspeed = 2
         
         self.collected = 0
         
@@ -172,8 +172,8 @@ class Saucer(DirectObject):
             self.stuntime = 2
         
         #Minimum beam speed
-        if self.beamspeed < 1:
-            self.beamspeed = 1
+        if self.beamspeed < 2:
+            self.beamspeed = 2
             
     def abductAnimal(self):
         self.pcount = self.particletime
