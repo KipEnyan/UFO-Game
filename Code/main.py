@@ -370,6 +370,21 @@ class World(DirectObject):
                     self.pickupables.append(temp)    
                     self.pickupables.append(temp)
                     print("in N")
+                if column == "W":
+                    temp = Pickupable()
+                    temp.setType("inanimate", "cage")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)    
+                    self.pickupables.append(temp)
+                    print("in N")
         print len(self.pickupables)    
         #self.env.setX(self.env.getX() - 60)
         #self.env.setP(self.env.getP() + 60)
