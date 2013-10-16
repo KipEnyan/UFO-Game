@@ -256,13 +256,13 @@ class World(DirectObject):
         self.map = open (self.mydir + "\Levels\level1.txt")
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
-        tsize = 1
+        tsize = 4
                 
         self.pickupables = []
         #self.animals = []
         #self.inanimates = []
         #self.hostiles = []
-        worldhalfwidth = 130
+        worldhalfwidth = 240
         worldradius = 43
         
         for i, row in enumerate(self.map):
