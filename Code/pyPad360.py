@@ -11,6 +11,7 @@ class pyPad360(DirectObject):
         #Get the number of controllers so we know how many to init
         count = joystick.get_count()
         
+        
         #Initialize the 360 controllers
         if count > 0:
             c1=joystick.Joystick(0)
@@ -25,6 +26,7 @@ class pyPad360(DirectObject):
             c4=joystick.Joystick(3)
             c4.init()                
     #def setupGamepads()
+        return count
                 
     def gamepadPollingTask(self, task):    
         for e in event.get():  

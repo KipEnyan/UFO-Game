@@ -22,15 +22,18 @@ class World(DirectObject):
 
         self.accept("escape", sys.exit)
         self.accept("enter", self.loadGame)
-        #self.accept("C1_START_UP", self.goToGame)
-        #self.accept("C1_START_DOWN", self.goToGame)
+        #self.accept("C1_START_UP", self.loadGame)
+        self.accept("C1_START_DOWN", self.loadGame)
+        
         Lvl = 1
         self.Lvl = Lvl
         
         gamepads = pyPad360()
-        gamepads.setupGamepads()
-        taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
-        self.gameControls360()
+        #print gamepads.setupGamepads()
+        if gamepads.setupGamepads() > 0:
+            gamepads.setupGamepads()
+            taskMgr.add(gamepads.gamepadPollingTask, "gamepadPollingTask")
+            self.gameControls360()
         
         self.title = loader.loadModel("Art/skybox.egg")
         self.title.reparentTo(render)
@@ -129,10 +132,6 @@ class World(DirectObject):
         del self.timeroutline
         self.TimeText.destroy()
         del self.TimeText
-        self.AnimalsLeft.destroy()
-        del self.AnimalsLeft
-        self.AnimalsLeftText.destroy()
-        del self.AnimalsLeftText
         
         for i in range(0,len(self.pickupables)):
             self.pickupables[i].pickup.removeNode()
@@ -142,6 +141,8 @@ class World(DirectObject):
         self.textd = OnscreenText(text="Press Enter or Start to restart!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
         #self.Lvl = 1
         self.accept("enter", self.nextLevel)
+        #self.accept("C1_START_UP", self.nextLevel)
+        self.accept("C1_START_DOWN", self.nextLevel)
         
     def winGame(self):
         self.levelComplete = True
@@ -156,37 +157,29 @@ class World(DirectObject):
         del self.env
         self.saucer.ship.removeNode()         
         del self.saucer.ship
-        self.timeroutline.removeNode()
-        del self.timeroutline
-        self.TimeText.destroy()
-        del self.TimeText
+        
         self.AnimalsLeft.destroy()
         del self.AnimalsLeft
         self.AnimalsLeftText.destroy()
         del self.AnimalsLeftText
-        #self.pickupables[251].pickup.removeNode()
-        #del self.pickupables[251].pickup
         for i in range(0,len(self.pickupables)):
             self.pickupables[i].pickup.removeNode()
             del self.pickupables[i].pickup
-        #print (len(self.pickupables))
-        """for enemy in self.pickupables:
-            enemy.pickup.removeNode()
-            del enemy.pickup"""
-        
-        
+
+     
         print self.medal
         if self.medal == "Gold":
-            self.timeroutline = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .76), scale = (.2,1,.2))
+            self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
         elif self.medal == "Silver":
-            self.timeroutline = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .76), scale = (.125,1,.225))
+            self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
         elif self.medal == "Bronze":
-            self.timeroutline = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .76), scale = (.1,.1,.2))    
+            self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.1,.1,.2))    
         self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.textd = OnscreenText(text="Press Enter or Start to go to next level!",style=1, fg=(0.8,0,0.1,1),pos=(0, -.88), scale = .06,mayChange = 1,align=TextNode.ACenter)
         self.Lvl += 1
         self.accept("enter", self.nextLevel)
-        
+        #self.accept("C1_START_UP", self.nextLevel)
+        self.accept("C1_START_DOWN", self.nextLevel)
         
     def nextLevel(self):
         self.skybox.removeNode()          
@@ -197,8 +190,17 @@ class World(DirectObject):
         del self.textd
         
         if self.levelComplete == True:
-            self.timeroutline.removeNode()          
+            self.timeroutline.removeNode()
             del self.timeroutline
+            self.TimeText.destroy()
+            del self.TimeText
+            self.medalImage.removeNode()          
+            del self.medalImage
+        if self.levelComplete == False:
+            self.AnimalsLeft.destroy()
+            del self.AnimalsLeft
+            self.AnimalsLeftText.destroy()
+            del self.AnimalsLeftText   
 
         self.startGame()
         
