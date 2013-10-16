@@ -580,17 +580,17 @@ class World(DirectObject):
 
     def loadHUD(self):
         #Draw image as outline for timer
-        self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
-        self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (-.98, 0, .88), scale = (.38,.50,.12))
+        #self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (1.1, 0, .86), scale = (.15,.1,.1))
+        #self.timeroutline = OnscreenImage(image = 'Art/timer.png', pos = (-.98, 0, .88), scale = (.38,.50,.12))
 
         #Draw num of animals left
         num = str(200000)
-        self.AnimalsLeft = OnscreenText(text="Animals Collected:",style=1, fg=(0,0,0,1),pos=(-1,.9), scale = .07,mayChange = 1)
-        self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(0,0,0,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
+        self.AnimalsLeft = OnscreenText(text="Animals Collected:",style=1, fg=(1,1,1,1),pos=(-1,.9), scale = .07,mayChange = 1)
+        self.AnimalsLeftText = OnscreenText(text=num,style=1, fg=(1,1,1,1),pos=(-1,0.8), scale = .09,mayChange = 1,align = TextNode.ALeft)
        
        #Draw time        
         t = "0:00"
-        self.TimeText = OnscreenText(text=t,style=1, fg=(0,0,0,1),pos=(1,0.85), scale = .09, mayChange = 1, align = TextNode.ALeft)
+        self.TimeText = OnscreenText(text=t,style=1, fg=(1,1,1,1),pos=(1,0.85), scale = .09, mayChange = 1, align = TextNode.ALeft)
 
     def dCharstr(self,number):
         theString = str(number)
