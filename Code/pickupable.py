@@ -215,3 +215,16 @@ class Pickupable(DirectObject):
         self.lr = False
         self.stuncount = 0
         self.pickup.setPos(self.shakex,self.shakey,self.shakez)
+        
+    def explode(self):
+        self.pcount = self.particletime
+        if self.type == 'animal':
+            self.particle = self.bloodp
+        else:
+            self.particle = self.explodep
+        self.particle.start(parent = self.pickup, renderParent = self.pickup)
+        
+        self.pickup.setAlphaScale(0) 
+        self.pickup.setTransparency(TransparencyAttrib.MAlpha)
+        self.willdie = True
+        self.falling = False  
