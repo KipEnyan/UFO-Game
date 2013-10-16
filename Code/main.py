@@ -10,6 +10,7 @@ from direct.gui.OnscreenImage import OnscreenImage
 
 import sys, math, random
 import os
+from panda3d.core import Filename
 from utilities import resource_path
 from saucer import*
 from pickupable import*
@@ -33,7 +34,7 @@ class World(DirectObject):
         self.gameControls360()
         
         self.setupLights()
-        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0}
+        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0,"k":0}
         self.prevtime = 0
         self.accept("escape", sys.exit)
         
@@ -50,19 +51,34 @@ class World(DirectObject):
         self.accept("d", self.setKey, ["d", 1])
         self.accept("d-up", self.setKey, ["d", 0])
         
-        
+        self.accept("k", self.setKey, ["k", 1])
+        self.accept("k-up", self.setKey, ["k", 0])       
+
+        self.mydir = os.path.abspath(sys.path[0])
+        self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
+        self.mydir = Filename(self.mydir)
+        self.mydir = self.mydir.toOsSpecific()
+
         
         
         
         self.setupWASD()
         
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
+        
+        self.animalsleft = 2
+        
+        taskMgr.add(self.textTask, "textTask")
+
         self.xspeed = 0
         self.yspeed = 0
         #For recycler
-        self.xbounds = 160
+        self.xbounds = 130
         self.currentpickupable = 0
         self.loadLevel()
+        
+        self.setupCollisions()
+        self.accept("beam-pickupable", self.beamCollide)
         
     def gameControls360(self):   
         #Accept each message and do something based on the button
@@ -108,9 +124,9 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
             
     def loadLevel(self):
-        #self.map = open("C:\Users\Vanded3\Documents\ufo-game\Code\map.txt")
-        self.map = resource_path(os.path.join("Levels", "map.txt"))
+        #self.map = open("C:\Users\Vanded3\Documents\ufo-game2\Code\Levels\level1.txt")
         #self.map = "CC0CCCCCCCC000CCCCCCCCCC00CCCCCCCCCCCCC"
+        self.map = open (self.mydir + "\Levels\level1.txt")
         self.map = [line.rstrip() for line in self.map]
         #self.terrainlist = []
         tsize = 1
@@ -119,38 +135,102 @@ class World(DirectObject):
         #self.animals = []
         #self.inanimates = []
         #self.hostiles = []
-        worldhalfwidth = 1
-        worldradius = 42
+        worldhalfwidth = 130
+        worldradius = 43
         
         for i, row in enumerate(self.map):
             for j, column in enumerate(row):
-                if column == "0":
+                if column == "-":
                     pass
                 if column == "C":
                     temp = Pickupable()
+                    print("in cow")
                     temp.setType("animal","cow")
-                    temp.pickup.setScale(10)
+                    temp.pickup.setScale(1)
                     angle = i * .1
                     y = worldradius * math.cos(angle)
                     z = worldradius * math.sin(angle)
-                    
-                    temp.pickup.setPos(worldhalfwidth - (j * tsize), y, z)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
-                    
                     self.pickupables.append(temp)
-        print len(self.pickupables)
+                    print (len(self.pickupables)) 
+                if column == "S":
+                    temp = Pickupable()
+                    temp.setType("animal", "sheep")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in S")
+                if column == "P":
+                    temp = Pickupable()
+                    temp.setType("animal", "cow")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in P")
+                if column == "B":
+                    temp = Pickupable()
+                    temp.setType("animal", "pig")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in B")
+                if column == "M":    
+                    temp = Pickupable()
+                    temp.setType("hostile", "missile")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)
+                    print("in M")
+                if column == "N":
+                    temp = Pickupable()
+                    temp.setType("inanimate", "tractor")
+                    temp.pickup.setScale(1)
+                    angle = i * .1
+                    y = worldradius * math.cos(angle)
+                    z= worldradius * math.sin(angle)
+                    temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
+                    rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
+                    temp.pickup.setHpr(0,rotangle - 90,0)
+                    #positioning : i*tsize
+                    temp.pickup.reparentTo(self.env)
+                    self.pickupables.append(temp)    
+                    self.pickupables.append(temp)
+                    print("in N")
+        print len(self.pickupables)    
             
       
-            
-             
-
-
-
-
-    
     def setKey(self, key, value):
         self.keyMap[key] = value
         
@@ -169,15 +249,70 @@ class World(DirectObject):
 
         xmov = 0
         ymov = 0
-        
-        if self.keyMap["w"]:
-            ymov = -40
-        if self.keyMap["s"]:
-            ymov = 40
-        if self.keyMap["a"]:
-            xmov = -40
-        if self.keyMap["d"]:
-            xmov = 40   
+        accel = 0
+        dir = -1
+        if self.keyMap["k"]:
+            self.saucer.beamon = True
+            
+            if self.xspeed > 30:
+                self.xspeed = 30
+            elif self.xspeed < -30:
+                self.xspeed = -30
+            if self.yspeed > 30:
+                self.yspeed = 30
+            elif self.yspeed < -30:
+                self.yspeed = -30
+            
+            if self.keyMap["w"]:
+                dir = 270
+            if self.keyMap["s"]:
+                dir = 90
+            if self.keyMap["a"]:
+                dir = 180
+            if self.keyMap["d"]:
+                dir = 0
+            if self.keyMap["w"] and self.keyMap["d"]:
+                dir = 315
+            if self.keyMap["w"] and self.keyMap["a"]:
+                dir = 225
+            if self.keyMap["s"] and self.keyMap["a"]:
+                dir = 135
+            if self.keyMap["s"] and self.keyMap["d"]:
+                dir = 45
+            
+            if dir != -1:
+                xmov = 26 * math.cos(math.radians(dir))
+                ymov = 26 * math.sin(math.radians(dir))
+            
+            if xmov == 0 and ymov == 0:   
+                accel = .1
+            else:   
+                accel = .035
+        else:
+            self.saucer.beamon = False
+            
+            if self.keyMap["w"]:
+                dir = 270
+            if self.keyMap["s"]:
+                dir = 90
+            if self.keyMap["a"]:
+                dir = 180
+            if self.keyMap["d"]:
+                dir = 0
+            if self.keyMap["w"] and self.keyMap["d"]:
+                dir = 315
+            if self.keyMap["w"] and self.keyMap["a"]:
+                dir = 225
+            if self.keyMap["s"] and self.keyMap["a"]:
+                dir = 135
+            if self.keyMap["s"] and self.keyMap["d"]:
+                dir = 45
+            
+            if dir != -1:
+                xmov = 40 * math.cos(math.radians(dir))
+                ymov = 40 * math.sin(math.radians(dir))
+            accel = .07
+
             
         if base.win.movePointer( 0, centerx, centery ):
                xmov += ( x - centerx ) * 1
@@ -190,17 +325,21 @@ class World(DirectObject):
             if xmov > 0:
                 xmov = 0
                
-        self.xspeed = self.xspeed + ( (xmov - self.xspeed) * .1)
-        self.yspeed = self.yspeed + ( (ymov - self.yspeed) * .1)
+        self.xspeed = self.xspeed + ( (xmov - self.xspeed) * accel)
+        self.yspeed = self.yspeed + ( (ymov - self.yspeed) * accel)
           
+        
           
         self.env.setX(self.env.getX() + elapsed * -self.xspeed)
         self.env.setP(self.env.getP() + elapsed * -self.yspeed)
+        
+        self.skybox.setX(self.skybox.getX() + elapsed * -.3 * self.xspeed)
+        self.skybox.setP(self.skybox.getP() + elapsed * -.1 * self.yspeed)
      
         self.saucer.ship.setR(self.xspeed * .2)
         self.saucer.ship.setP(self.yspeed * .2)
             
-        print self.env.getX()
+        #print self.env.getX()
         return Task.cont
             
     def loadModels(self):
@@ -209,15 +348,23 @@ class World(DirectObject):
         self.env.setScale(1)
         self.env.setPos(0, 0, -55)
         
+        self.skybox = loader.loadModel("Art/skytube.egg")
+        self.skybox.reparentTo(render)
+        self.skybox.setScale(2)
+        self.skybox.setPos(0, 0, 0)
+        self.skybox.setHpr(0,-60,0)
+        
+        
         #Shadow Code:
         proj = render.attachNewNode(LensNode('proj'))
         lens = PerspectiveLens()
         proj.node().setLens(lens)
         #The following is for debugging:
-        proj.node().showFrustum()  
-        proj.find('frustum').setColor(1, 0, 0, 1)
+        #proj.node().showFrustum()  
+        #proj.find('frustum').setColor(1, 0, 0, 1)
         proj.reparentTo(render)
         proj.setPos(self.saucer.ship.getPos())
+        proj.setZ(-2)
         proj.setHpr(0,-90,0)
         tex = loader.loadTexture('Art\UFO_Shadow.png')
         tex.setWrapU(Texture.WMBorderColor)
@@ -263,38 +410,7 @@ class World(DirectObject):
         self.AnimalsLeftText.setText(str(self.animalsleft))
         return Task.cont
     
-    def loadPickupables(self):
-        #This function just loads a bunch of pickupables of random types.
-        
-        self.pickupables = []
-        self.animals = []
-        self.inanimates = []
-        self.hostiles = []
-        
-        self.possibletypes = ['animal','inanimate','hostile']
-        self.animaltypes = ['cow','pig','panda']
-        self.inanimatetypes = ['house','car','tree']
-        self.hostiletypes = ['tank','helicopter','launcher']
-        for x in range(30):
-            temp = Pickupable()
-            type = random.choice(possibletypes)
-            if type == 'animal':
-                type2 = random.choice(animaltypes)
-                temp.setType(type,type2)
-            elif type == 'inanimate':
-                type2 = random.choice(inanimatetypes)
-                temp.setType(type,type2)
-            elif type == 'hostile':
-                type2 = random.choice(hostiletypes)
-                temp.setType(type,type2)
-            self.pickupables.append(temp)
-        
-    def spawnPickupable(self):  #Spawn the next pickupable in line from pickupable list
-        self.pickupables[self.currentpickupable].alive = True
-        self.currentpickupable += 1
-        if self.currentpickupable > (len(self.pickupables) - 1):
-            self.currentpickupable = 0
-        
+
     def setupLights(self):
         """loads initial lighting"""
         self.dirLight = DirectionalLight("dirLight")
@@ -311,7 +427,42 @@ class World(DirectObject):
         self.ambientLightNP = render.attachNewNode(self.ambientLight)
         render.setLight(self.ambientLightNP)
         
-      
+    def setupCollisions(self):
+        #make a collision traverser
+        base.cTrav = CollisionTraverser()
+        #set the collision handler to send event messages on collision
+        self.cHandler = CollisionHandlerEvent()
+        # %in is substituted with the name of the into object
+        self.cHandler.setInPattern("beam-%in")
+        
+        #saucer collider
+        cSphere = CollisionSphere((0,0,0), 2)
+        cNode = CollisionNode("beam")
+        cNode.addSolid(cSphere)
+        #set to only be a "from" object
+        cNode.setIntoCollideMask(BitMask32.allOff())
+        cNodePath = self.saucer.dummy.attachNewNode(cNode)
+        cNodePath.setZ(-25)
+        #cNodePath.show()
+        base.cTrav.addCollider(cNodePath, self.cHandler)
+        
+        #target colliders
+        for p in self.pickupables:
+            cSphere = CollisionSphere((0,0,0), 1)
+            cNode = CollisionNode("pickupable")
+            cNode.addSolid(cSphere)
+            cNodePath = p.pickup.attachNewNode(cNode)
+            #cNodePath.show()
+    
+    def beamCollide(self, cEntry):
+        if self.saucer.beamon:
+            obj = cEntry.getIntoNodePath().getParent()
+            
+            for x in self.pickupables:
+                if (x.pickup == obj):
+                    self.saucer.pickUp(x)
+                    return
+
         
 w = World()
 run()
