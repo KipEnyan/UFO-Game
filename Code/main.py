@@ -297,6 +297,7 @@ class World(DirectObject):
                     pass
                 if column == "C":
                     temp = Pickupable("animal","cow")
+                    temp.pickup.reparentTo(self.env)
                     #print("in cow")
                     temp.pickup.setScale(1)
                     angle = i * .1
@@ -305,8 +306,9 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
-                    temp.pickup.reparentTo(self.env)
+                    #temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
                    #print (len(self.pickupables)) 
                 if column == "S":
@@ -318,6 +320,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -331,6 +334,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -344,6 +348,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -357,6 +362,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)
@@ -370,6 +376,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
@@ -383,6 +390,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
@@ -396,6 +404,7 @@ class World(DirectObject):
                     temp.pickup.setPos((j * tsize)-worldhalfwidth, y, z)
                     rotangle = math.degrees(math.atan2((z - 0), (y - 0)))
                     temp.pickup.setHpr(0,rotangle - 90,0)
+                    temp.pickup.setH(temp.pickup, random.randint(0,360))
                     #positioning : i*tsize
                     temp.pickup.reparentTo(self.env)
                     self.pickupables.append(temp)    
