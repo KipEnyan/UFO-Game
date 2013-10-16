@@ -61,15 +61,14 @@ class World(DirectObject):
         
         self.saucer = Saucer()
         base.disableMouse()
-        camera.setPosHpr(0, -55, 65, 0, 50, 0)
+        camera.setPosHpr(0, -40, 73, 0, 0, 0)
         camera.lookAt(self.saucer.ship)
-        camera.setP(camera.getP() - 5)
-
+        camera.setP(camera.getP() -8)
         self.loadModels()
         self.loadHUD()
             
         self.setupLights()
-        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0,"k":0}
+        self.keyMap = {"left":0, "right":0,"w":0,"a":0,"s":0,"d":0,"k":0,"l":0}
         self.prevtime = 0
   
         self.accept("arrow_right", self.setKey, ["right", 1])
@@ -86,7 +85,10 @@ class World(DirectObject):
         self.accept("d-up", self.setKey, ["d", 0])
         
         self.accept("k", self.setKey, ["k", 1])
-        self.accept("k-up", self.setKey, ["k", 0]) 
+        self.accept("k-up", self.setKey, ["k", 0])       
+        self.accept("l", self.setKey, ["l", 1])
+        self.accept("l-up", self.setKey, ["l", 0]) 
+        
         
         self.mydir = os.path.abspath(sys.path[0])
         self.mydir = Filename.fromOsSpecific(self.mydir).getFullpath()
@@ -392,7 +394,7 @@ class World(DirectObject):
     def setKey(self, key, value):
         self.keyMap[key] = value
         
-    def rotateWorld(self,task):
+    def rotateWorld(self,task): #Handles saucer movement, world rotation etc
         elapsed = task.time - self.prevtime
         self.prevtime = task.time
         
@@ -409,6 +411,15 @@ class World(DirectObject):
         ymov = 0
         accel = 0
         dir = -1
+        
+        if self.keyMap["l"]:
+            self.saucer.drop(self.env)
+            #for object in self.saucer.abductlist:
+                #object.abduct = False
+                #object.pickup.wrtReparentTo(self.env)
+                #object.pickup.setPos(self.saucer.dummy2.getX(),self.saucer.dummy2.getY(),self.saucer.dummy2.getZ())
+                #camera.lookAt(object.pickup)
+
         if self.keyMap["k"]:
             self.saucer.beamon = True
             
@@ -608,7 +619,7 @@ class World(DirectObject):
         #set to only be a "from" object
         cNode.setIntoCollideMask(BitMask32.allOff())
         cNodePath = self.saucer.dummy.attachNewNode(cNode)
-        cNodePath.setZ(-25)
+        cNodePath.setZ(-36)
         #cNodePath.show()
         base.cTrav.addCollider(cNodePath, self.cHandler)
         
