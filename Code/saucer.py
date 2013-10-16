@@ -177,7 +177,7 @@ class Saucer(DirectObject):
             
     def abductAnimal(self):
         self.pcount = self.particletime
-        self.abductp.start(parent = self.ship, renderParent = self.ship)
+        #self.abductp.start(parent = self.ship, renderParent = self.ship)
         self.collected += 1
 
         

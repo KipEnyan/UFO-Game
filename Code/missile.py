@@ -4,8 +4,8 @@ from direct.showbase.DirectObject import DirectObject
 class Missile(DirectObject):
 	def __init__(self):
 		self.model = loader.loadModel("Art/missile.egg")
-		self.acc = .005
-		self.speed = .1
+		self.acc = .01
+		self.speed = .2
 
 	def seek (self, player):
 		self.speed += self.acc

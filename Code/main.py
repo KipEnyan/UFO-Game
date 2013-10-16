@@ -25,6 +25,11 @@ class World(DirectObject):
         self.accept("escape", sys.exit) 
         self.accept("enter", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
+        self.music = base.loader.loadMusic("Sounds/GameMusic2.wav")
+        self.music.setLoop(True)
+        self.music.setVolume(.33
+            )
+        self.music.play()
         self.tractorbeamsound = base.loader.loadSfx("Sounds/tractorbeam.wav")
         Lvl = 1
         self.Lvl = Lvl
