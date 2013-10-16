@@ -186,7 +186,7 @@ class Saucer(DirectObject):
             self.pcount -= 1
         elif self.pcount == 0:
             self.pcount = -1
-            #self.abductp.reset()
+            self.abductp.reset()
             self.abductp.disable()
             
         return task.cont
