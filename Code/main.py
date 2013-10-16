@@ -211,8 +211,8 @@ class World(DirectObject):
         del self.textd
         
         if self.levelComplete == True:
-            self.timeroutline.removeNode()
-            del self.timeroutline
+            #self.timeroutline.removeNode()
+            #del self.timeroutline
             self.TimeText.destroy()
             del self.TimeText
             self.medalImage.removeNode()          
