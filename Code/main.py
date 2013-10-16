@@ -21,6 +21,7 @@ del base
 class World(DirectObject):
     def __init__(self):
 
+        base.disableMouse()
         self.accept("escape", sys.exit) 
         self.accept("enter", self.loadGame)
         self.accept("C1_START_DOWN", self.loadGame)
@@ -40,7 +41,8 @@ class World(DirectObject):
         self.title.setScale(1)
         self.title.setPos(0, 0, -55)
         
-        self.text1 = OnscreenText(text="Press Enter to Start",style=1, fg=(0.8,0,0.1,1),pos=(0, -0.88), scale = .2,mayChange = 1,align=TextNode.ACenter)
+        self.titleScreen = OnscreenImage(image = 'Art/images/title_screen.png')
+        #self.text1 = OnscreenText(text="Press Enter to Start",style=1, fg=(0.8,0,0.1,1),pos=(0, 0.77), scale = .2,mayChange = 1,align=TextNode.ACenter)
         self.inGame = False
         #print self.text1
         
@@ -51,8 +53,9 @@ class World(DirectObject):
             self.inGame = True
             self.title.removeNode()          
             del self.title
-            self.text1.destroy()
-            del self.text1
+            self.titleScreen.destroy()
+            #self.text1.destroy()
+            #del self.text1
             
             self.startGame()
  
@@ -60,7 +63,6 @@ class World(DirectObject):
         #if self.inGame == True:
         
         self.saucer = Saucer()
-        base.disableMouse()
         camera.setPosHpr(0, -40, 73, 0, 0, 0)
         camera.lookAt(self.saucer.ship)
         camera.setP(camera.getP() -8)
@@ -188,12 +190,12 @@ class World(DirectObject):
             self.pickupables[i].pickup.removeNode()
             del self.pickupables[i].pickup
         
-        if self.medal == "Gold":
-            self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
-        elif self.medal == "Silver":
-            self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
-        elif self.medal == "Bronze":
-            self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
+        #if self.medal == "Gold":
+        #    self.medalImage = OnscreenImage(image = 'Art/gold.png', pos = (1.1, 0, .46), scale = (.2,1,.2))
+        #elif self.medal == "Silver":
+        #    self.medalImage = OnscreenImage(image = 'Art/silver.png', pos = (1.1, 0, .46), scale = (.125,1,.225))
+        #elif self.medal == "Bronze":
+        #    self.medalImage = OnscreenImage(image = 'Art/bronze.png', pos = (1.1, 0, .46), scale = (.15,.1,.2))    
         
         if self.Lvl < 4:
             self.texte = OnscreenText(text="Level Complete!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
@@ -203,7 +205,8 @@ class World(DirectObject):
             self.accept("C1_START_DOWN", self.nextLevel)
             
         else:
-            self.texte = OnscreenText(text="You Finished the Game!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
+            self.creditsScreen = OnscreenImage(image = 'Art/images/credits_screen.png')
+            #self.texte = OnscreenText(text="You Finished the Game!",style=1, fg=(0.8,0,0.1,1),pos=(0, 0), scale = .2,mayChange = 1,align=TextNode.ACenter)
     def nextLevel(self):
         self.skybox.removeNode()          
         del self.skybox
@@ -217,8 +220,8 @@ class World(DirectObject):
             #del self.timeroutline
             self.TimeText.destroy()
             del self.TimeText
-            self.medalImage.removeNode()          
-            del self.medalImage
+            #self.medalImage.removeNode()          
+            #del self.medalImage
         if self.levelComplete == False:
             self.AnimalsLeft.destroy()
             del self.AnimalsLeft
