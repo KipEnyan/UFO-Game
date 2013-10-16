@@ -54,10 +54,7 @@ class World(DirectObject):
         self.accept("k-up", self.setKey, ["k", 0])       
         self.accept("l", self.setKey, ["l", 1])
         self.accept("l-up", self.setKey, ["l", 0])      
-
-        
-        
-        
+    
         self.setupWASD()
         
         taskMgr.add(self.rotateWorld, "rotateWorldTask")
