@@ -95,9 +95,9 @@ class Pickupable(DirectObject):
         self.lr = False
         self.stuncount = 0
         self.myship = ship
-        self.height += .02 * self.weight * ship.beamspeed
+        self.height += .01 * self.weight * ship.beamspeed
         self.pickup.setZ(-26 + self.height)
-        
+
         if type == 'animal':
             self.pickup.setHpr(self.pickup.getH() + 1,self.pickup.getP() + 1,self.pickup.getR() + 1)
         else:   

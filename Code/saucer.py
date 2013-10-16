@@ -20,9 +20,12 @@ class Saucer(DirectObject):
         self.dummy2 =  NodePath('dummy2')
         self.dummy2.reparentTo(render)
 
+        self.glownode = self.ship.find("**/l_glownode")
+        self.glownode.setColor(0,0,.5,1)
         
-        
-        
+        self.glownode2 = self.ship.find("**/r_glownode")
+        self.glownode2.setColor(0,0,.5,1)
+            
         self.ship.reparentTo(render)
         self.ship.setScale(1)
         #self.ship.setH(180)
@@ -35,11 +38,14 @@ class Saucer(DirectObject):
         self.animals = []
         self.inanimates = []
         taskMgr.add(self.abductTask, "abductTask")
-        self.stuntime = 20
-        self.stunbase = 20
+        taskMgr.add(self.lightTask, "lightTask")
+        self.stuntime = 30
+        self.stunbase = 30
         self.updown = False
         self.beamspeed = 1
         self.basebeamspeed = 1
+        
+        self.beamon = True
 
     def pickUp(self,object):   #Pick up another pickupable 
         if object.stuncount < self.stuntime:
@@ -70,7 +76,17 @@ class Saucer(DirectObject):
             object.abduct = False
             object.pickup.reparentTo(render)
         self.abductlist = []
-        
+ 
+    def lightTask(self,task):
+        if not self.beamon:
+            self.glownode.setColor(.1,.06,.92,1)
+            self.glownode2.setColor(.1,.06,.92,1)
+        if self.beamon:
+            s = self.beamspeed/25     
+            self.glownode.setColor(.12 - s/10,1 - s,.08 - s/10,1)
+            self.glownode2.setColor(.12 - s/10,1 - s,.08- s/10,1)
+        return task.cont
+            
     def abductTask(self,task):
         if self.updown:
             self.dummy.setZ(self.ship.getZ())
@@ -109,6 +125,7 @@ class Saucer(DirectObject):
             return self.panda - ((self.pigs + self.sheep + self.cows) / 3)
           
         return 0
+        
     def findSpeed(self):
         self.cows = 0
         self.pigs = 0
@@ -124,7 +141,7 @@ class Saucer(DirectObject):
             if animal.type2 == 'panda':
                 self.panda += 1
         
-        speedadd = self.biggest() * 2
+        speedadd = self.biggest() * 1.7
         
         speeddeduct = len(self.inanimates)
         self.beamspeed = self.basebeamspeed - speeddeduct + speedadd
