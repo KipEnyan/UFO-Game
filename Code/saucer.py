@@ -81,7 +81,7 @@ class Saucer(DirectObject):
                 object.resetStun()
                 object.abduct = True
                 self.abductlist.append(object)
-                object.playAnimalSound()
+                object.playPickupSound()
                 object.pickup.reparentTo(self.dummy2)
                 object.pickup.setHpr(0,0,0)
                 object.pickup.setPos(0,0,-37)
@@ -169,8 +169,8 @@ class Saucer(DirectObject):
             self.stuntime = 2
         
         #Minimum beam speed
-        if self.beamspeed < .6:
-            self.beamspeed = .6
+        if self.beamspeed < 1:
+            self.beamspeed = 1
             
     def abductAnimal(self):
         self.pcount = self.particletime

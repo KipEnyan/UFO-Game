@@ -17,20 +17,25 @@ class Pickupable(DirectObject):
         self.type1 = type1
         self.type2 = type2
         self.weight = 1
-        self.sounds = []
+        self.pickupSounds = []
 
         if self.type1 == "animal":
             for i in range(4):
                 sound = base.loader.loadSfx("Sounds/" + self.type2 + str(i) + ".wav")
-                self.sounds.append(sound)
+                self.pickupSounds.append(sound)
 
-            self.weight = 1
             self.suckSound = base.loader.loadSfx("Sounds/suck.wav")
+            self.splatSound = base.loader.loadSfx("Sounds/splat.wav")
+
+        elif self.type1 == "inanimate":
+            sound = base.loader.loadSfx("Sounds/crunch.wav")
+            self.pickupSounds.append(sound)
+            self.splatSound = base.loader.loadSfx("Sounds/explosion.wav")
             
 
         self.pickup = loader.loadModel("Art/" + self.type2 + ".egg")
         self.pickup.setScale(1)  
-        self.splatSound = base.loader.loadSfx("Sounds/splat.wav")
+        
         self.crunchSound = base.loader.loadSfx("Sounds/crunch.wav")
         #Being abducted?
         self.abduct = False 
@@ -96,24 +101,29 @@ class Pickupable(DirectObject):
         self.lr = False
         self.stuncount = 0
         self.myship = ship
-        self.height += .01 * self.weight * ship.beamspeed
         self.pickup.setZ(-36 + self.height)
 
-        if type == 'animal':
-            self.pickup.setHpr(self.pickup.getH() + 1,0,0)
-        else:   
-            self.pickup.setHpr(self.pickup.getH() + .5,0,0)
-        if self.height >= self.abductheight:
-            self.abducted()
+
+        if self.type1 == 'animal':
+            if self.height < self.abductheight:
+                self.height += .01 * self.weight * ship.beamspeed
+                self.pickup.setHpr(self.pickup.getH() + 1,0,0)
+            else:
+                self.abducted()
+        else:
+            if self.height < self.abductheight:
+                self.height += .01 * self.weight * ship.beamspeed
+                self.pickup.setHpr(self.pickup.getH() + .5,0,0)
+            else:
+                ship.abductlist.remove(self)
+                self.explode()
+
         
     
-    def playAnimalSound(self):
-        randSound = random.choice(self.sounds)
+    def playPickupSound(self):
+        randSound = random.choice(self.pickupSounds)
         randSound.play()
-        
-    def playCrunchSound(self):
-        self.crunchSound.play()
-        
+
     def abducted(self):
         self.suckSound.play()
         self.die()
