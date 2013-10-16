@@ -1,0 +1,306 @@
+<CoordinateSystem> { Y-Up }
+
+<Comment> {
+  "maya2egg2013 -p -keep-uvs -round-uvs -tbnall -a none -cs y-up -uo cm -trans all -o 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1.egg' 'C:/Users/frankr4/Documents/maya/projects/Game Dev I - Project 2/scenes/ufo 1_temp.mb'"
+}
+<Texture> blinn6SG {
+  "Art/images/cage_texture.png"
+  <Scalar> format { rgba }
+  <Scalar> wrapu { repeat }
+  <Scalar> wrapv { repeat }
+  <Scalar> minfilter { linear_mipmap_linear }
+  <Scalar> magfilter { linear }
+  <Scalar> envtype { modulate }
+}
+<Group> groundPlane_transform {
+  <Transform> {
+    <Matrix4> {
+      12 0 0 0
+      0 0 12 0
+      0 -1 0 0
+      0 0 0 1
+    }
+  }
+}
+<Group> cage {
+  <Transform> {
+    <Matrix4> {
+      1.86905 0 0 0
+      0 1.86905 0 0
+      0 0 1.86905 0
+      0 0 0 1
+    }
+  }
+  <VertexPool> cageShape.verts {
+    <Vertex> 0 {
+      -1.9091 0 -1.9091
+      <UV> {
+        0.00559866 0.639937
+        <Tangent> { 0 1 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 1 {
+      -1.9091 0 -1.9091
+      <UV> {
+        0.996714 0.639937
+        <Tangent> { -1 0 2.17373e-007 }
+        <Binormal> { -2.17373e-007 0 -1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 2 {
+      -1.9091 0 -1.9091
+      <UV> {
+        0.226952 0.861291
+        <Tangent> { 1 -4.34746e-007 0 }
+        <Binormal> { -4.34746e-007 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 3 {
+      -1.9091 0 1.9091
+      <UV> {
+        0.00559843 0.365733
+        <Tangent> { 0 1 -5.38546e-007 }
+        <Binormal> { 0 -5.38546e-007 -1 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 4 {
+      -1.9091 0 1.9091
+      <UV> {
+        0.996714 0.365733
+        <Tangent> { -1 0 2.17373e-007 }
+        <Binormal> { -2.17373e-007 0 -1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 5 {
+      -1.9091 0 1.9091
+      <UV> {
+        0.226953 0.144379
+        <Tangent> { 1 -7.60807e-007 0 }
+        <Binormal> { 7.60807e-007 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 6 {
+      -1.9091 3.08228 -1.9091
+      <UV> {
+        0.226952 0.639937
+        <Tangent> { 0 1 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 7 {
+      -1.9091 3.08228 -1.9091
+      <UV> {
+        0.226952 0.639937
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 8 {
+      -1.9091 3.08228 -1.9091
+      <UV> {
+        0.226952 0.639937
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 9 {
+      -1.9091 3.08228 1.9091
+      <UV> {
+        0.226952 0.365733
+        <Tangent> { 0 1 -5.38546e-007 }
+        <Binormal> { 0 -5.38546e-007 -1 }
+      }
+      <Normal> { -1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 10 {
+      -1.9091 3.08228 1.9091
+      <UV> {
+        0.226952 0.365733
+        <Tangent> { 1 -2.17373e-007 0 }
+        <Binormal> { 2.17373e-007 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 11 {
+      -1.9091 3.08228 1.9091
+      <UV> {
+        0.226952 0.365733
+        <Tangent> { 1 0 2.17373e-007 }
+        <Binormal> { 2.17373e-007 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 12 {
+      1.9091 0 -1.9091
+      <UV> {
+        0.72251 0.639937
+        <Tangent> { -1 0 2.17373e-007 }
+        <Binormal> { -2.17373e-007 0 -1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 13 {
+      1.9091 0 -1.9091
+      <UV> {
+        0.501156 0.861291
+        <Tangent> { 1 -4.34747e-007 0 }
+        <Binormal> { -4.34747e-007 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 14 {
+      1.9091 0 -1.9091
+      <UV> {
+        0.72251 0.639937
+        <Tangent> { 0 -1 8.07819e-007 }
+        <Binormal> { 0 -8.07819e-007 -1 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 15 {
+      1.9091 0 1.9091
+      <UV> {
+        0.72251 0.365733
+        <Tangent> { -1 0 2.17373e-007 }
+        <Binormal> { -2.17373e-007 0 -1 }
+      }
+      <Normal> { 0 -1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 16 {
+      1.9091 0 1.9091
+      <UV> {
+        0.501157 0.144379
+        <Tangent> { 1 -7.60807e-007 0 }
+        <Binormal> { 7.60807e-007 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 17 {
+      1.9091 0 1.9091
+      <UV> {
+        0.72251 0.365733
+        <Tangent> { 0 -1 5.38546e-007 }
+        <Binormal> { 0 -5.38546e-007 -1 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 18 {
+      1.9091 3.08228 -1.9091
+      <UV> {
+        0.501156 0.639937
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+      <Normal> { 0 0 -1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 19 {
+      1.9091 3.08228 -1.9091
+      <UV> {
+        0.501156 0.639937
+        <Tangent> { 1 0 0 }
+        <Binormal> { 0 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 20 {
+      1.9091 3.08228 -1.9091
+      <UV> {
+        0.501156 0.639937
+        <Tangent> { 0 -1 8.07819e-007 }
+        <Binormal> { 0 -8.07819e-007 -1 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 21 {
+      1.9091 3.08228 1.9091
+      <UV> {
+        0.501156 0.365733
+        <Tangent> { 1 -2.17374e-007 0 }
+        <Binormal> { 2.17374e-007 1 0 }
+      }
+      <Normal> { 0 0 1 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 22 {
+      1.9091 3.08228 1.9091
+      <UV> {
+        0.501156 0.365733
+        <Tangent> { 1 0 2.17373e-007 }
+        <Binormal> { 2.17373e-007 0 -1 }
+      }
+      <Normal> { 0 1 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+    <Vertex> 23 {
+      1.9091 3.08228 1.9091
+      <UV> {
+        0.501156 0.365733
+        <Tangent> { 0 -1 5.38546e-007 }
+        <Binormal> { 0 -5.38546e-007 -1 }
+      }
+      <Normal> { 1 0 0 }
+      <RGBA> { 1 1 1 1 }
+    }
+  }
+  <Polygon> {
+    <Normal> { 0 0 1 }
+    <TRef> { blinn6SG }
+    <VertexRef> { 5 16 21 10 <Ref> { cageShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 1 0 }
+    <TRef> { blinn6SG }
+    <VertexRef> { 11 22 19 8 <Ref> { cageShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 0 -1 }
+    <TRef> { blinn6SG }
+    <VertexRef> { 7 18 13 2 <Ref> { cageShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 0 -1 0 }
+    <TRef> { blinn6SG }
+    <VertexRef> { 1 12 15 4 <Ref> { cageShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { 1 0 0 }
+    <TRef> { blinn6SG }
+    <VertexRef> { 17 14 20 23 <Ref> { cageShape.verts } }
+  }
+  <Polygon> {
+    <Normal> { -1 0 0 }
+    <TRef> { blinn6SG }
+    <VertexRef> { 0 3 9 6 <Ref> { cageShape.verts } }
+  }
+}
